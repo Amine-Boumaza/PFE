@@ -13,8 +13,8 @@ export const DASHBOARD_SIDEBAR_LINKS = [
   {
     key: "dashboard",
     label: "Dashboard",
-    path: "/",
-    icon: <HiOutlineViewGrid />,
+    path: "",
+    // icon: <HiOutlineViewGrid />,
   },
   {
     key: "category",
@@ -24,6 +24,7 @@ export const DASHBOARD_SIDEBAR_LINKS = [
       {
         key: "categoryKey1",
         label: "CategoryName1",
+        path: "/CategoryName1",
         subcategories: [
           {
             key: "teamKey1",
@@ -40,6 +41,7 @@ export const DASHBOARD_SIDEBAR_LINKS = [
       {
         key: "categoryKey2",
         label: "CategoryName2",
+        path: "/CategoryName2",
         subcategories: [
           {
             key: "teamKey2",
@@ -50,12 +52,11 @@ export const DASHBOARD_SIDEBAR_LINKS = [
       },
       // Add more subcategories as needed
     ],
-    icon: <HiOutlineShoppingCart />,
   },
   {
-    key: "Members",
-    label: "Members",
-    path: "teams/members",
+    key: "Financial Management",
+    label: "Financial Management",
+    path: "/financialManagement",
     icon: <HiOutlineUsers />,
   },
 ];

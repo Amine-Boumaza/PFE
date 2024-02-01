@@ -8,6 +8,10 @@ export default {
         c1: "#1a6271",
         hover: "#3addff",
       },
+
+      transitionProperty: {
+        height: "height",
+      },
     },
   },
   plugins: [],

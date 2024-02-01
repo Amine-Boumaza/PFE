@@ -4,9 +4,9 @@ import Sidebar from "./sidebar";
 
 export default function Layout() {
   return (
-    <div className="flex flex-col md:flex-row bg-neutral-100 h-screen w-screen overflow-hidden">
+    <div className="flex flex-col   md:flex-row bg-neutral-100 h-screen w-screen overflow-hidden">
       {/* Sidebar for desktop view */}
-      <div className="md:w-56 flex-none bg-c1">
+      <div className="md:w-60  flex-none bg-c1">
         <Sidebar />
       </div>
 
