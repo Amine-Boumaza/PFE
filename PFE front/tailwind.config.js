@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        c1: "#1a6271",
+        c1: "#171717",
         hover: "#3addff",
       },
 
@@ -14,5 +14,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar")],
 };

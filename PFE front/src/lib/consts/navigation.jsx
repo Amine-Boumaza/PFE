@@ -1,10 +1,6 @@
 import {
-  HiOutlineViewGrid,
   HiOutlineCube,
-  HiOutlineShoppingCart,
   HiOutlineUsers,
-  HiOutlineDocumentText,
-  HiOutlineAnnotation,
   HiOutlineQuestionMarkCircle,
   HiOutlineCog,
 } from "react-icons/hi";
@@ -13,51 +9,32 @@ export const DASHBOARD_SIDEBAR_LINKS = [
   {
     key: "dashboard",
     label: "Dashboard",
-    path: "",
+    path: "/management",
     // icon: <HiOutlineViewGrid />,
   },
   {
-    key: "category",
-    label: "Category",
-    icon: <HiOutlineCube />,
-    subcategories: [
-      {
-        key: "categoryKey1",
-        label: "CategoryName1",
-        path: "/CategoryName1",
-        subcategories: [
-          {
-            key: "teamKey1",
-            label: "TeamName1",
-            path: "/CategoryName1/TeamName1",
-          },
-          {
-            key: "teamKey2",
-            label: "TeamName2",
-            path: "/CategoryName1/TeamName2",
-          },
-        ],
-      },
-      {
-        key: "categoryKey2",
-        label: "CategoryName2",
-        path: "/CategoryName2",
-        subcategories: [
-          {
-            key: "teamKey2",
-            label: "TeamName2",
-            path: "/CategoryName2/TeamName2",
-          },
-        ],
-      },
-      // Add more subcategories as needed
-    ],
+    key: "Activity",
+    label: "Activity",
+    path: "/management/activity",
+    // icon: <HiOutlineCube />,
+
+    // Add more subcategories as needed
   },
   {
     key: "Financial Management",
     label: "Financial Management",
-    path: "/financialManagement",
-    icon: <HiOutlineUsers />,
+    path: "/management/financialmanagement",
+  },
+  {
+    key: "sessions",
+    label: "Sessions",
+    path: "/management/sessions",
+    // sessions
+  },
+  {
+    key: "doctor form",
+    label: "Doctor Form",
+    path: "/doctorForm",
   },
 ];
 

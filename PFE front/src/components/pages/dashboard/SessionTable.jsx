@@ -1,0 +1,70 @@
+import React from "react";
+import { SessionsData } from "./data/sessionsData";
+
+export default function SessionTable() {
+  const next7DaysSessions = SessionsData.filter((session) => {
+    const sessionDate = new Date(session.date);
+    const today = new Date();
+    const sevenDaysFromNow = new Date(today);
+    sevenDaysFromNow.setDate(today.getDate() + 7);
+
+    return sessionDate >= today && sessionDate <= sevenDaysFromNow;
+  });
+
+  return (
+    <div className="antialiased font-sans">
+      <div className="container mx-auto px-4 sm:px-8">
+        <div className="py-8">
+          <div>
+            <h2 className="text-2xl font-semibold leading-tight">
+              Sessions for the Next 7 Days
+            </h2>
+          </div>
+          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
+            {/* Add max-h-[YOUR_HEIGHT] and overflow-y-auto to make the table scrollable */}
+            <div className="max-h-96 overflow-y-auto">
+              <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+                <table className="min-w-full leading-normal">
+                  <thead>
+                    <tr>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Category
+                      </th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Team
+                      </th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Coach
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {next7DaysSessions.map((session, index) => (
+                      <tr key={index}>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          {session.category}
+                        </td>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          {session.team}
+                        </td>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          {session.date}
+                        </td>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          {session.coach}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

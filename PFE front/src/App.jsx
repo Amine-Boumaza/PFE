@@ -1,28 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./components/pages/login";
 import Layout from "./components/shared/layout";
 import Dashboard from "./components/pages/dashboard";
-import Category from "./components/pages/category";
+
+import FinancialManagement from "./components/pages/financialManagement";
+import Activity from "./components/pages/activity";
+import Sessions from "./components/pages/sessions";
 
 function App() {
-  const [activeLink, setActiveLink] = useState(null);
-
-  useEffect(() => {
-    const storedActiveLink = localStorage.getItem("activeLink");
-    setActiveLink(storedActiveLink || null);
-  }, []);
-
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Layout activeLink={activeLink} setActiveLink={setActiveLink} />
-          }
-        >
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/management/*" element={<Layout />}>
           <Route index element={<Dashboard />} />
-          <Route path="category" element={<Category />} />
+          <Route path="activity" element={<Activity />} />
+          <Route path="financialmanagement" element={<FinancialManagement />} />
+          <Route path="sessions" element={<Sessions/>} />
         </Route>
       </Routes>
     </Router>
