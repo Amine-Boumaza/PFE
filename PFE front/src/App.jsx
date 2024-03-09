@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/pages/login";
 import Layout from "./components/shared/layout";
@@ -7,12 +7,32 @@ import FinancialManagement from "./components/pages/management codes/financialMa
 import Activity from "./components/pages/management codes/activity";
 import Sessions from "./components/pages/management codes/sessions";
 import Register from "./components/pages/register";
+import axios from "axios";
 
 function App() {
+  const [auth, setauth] = useState(false);
+  const [message, setMessage] = useState("");
+  const [Email, setEmail] = useState("");
+  axios.defaults.withCredentials = true;
+
+  useEffect(() => {
+    axios.get("http://localhost:8081/management")
+      .then((res) => {
+        if (res.data.status === "success") {
+          setauth(true)
+          setEmail(res.data.Email)
+          navigate("/login")
+        } else {
+          setauth(false)
+          setMessage(res.data.Error)
+        }
+      })
+      .then((err) => console.log(err))
+  }, []);
   return (
+
     <Router>
       <Routes>
-
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/management/" element={<Layout />}>

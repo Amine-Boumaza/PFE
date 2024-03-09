@@ -20,11 +20,11 @@ const db = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "noudjoum",
+    database: "association_v1",
 });
 
 app.post("/register", (req, res) => {
-    const sql = "INSERT INTO admin (name, mail, Password) VALUES ?";
+    const sql = "INSERT INTO user ( TenantID, Email, PasswordHash) VALUES ?";
     bcrypt.hash(req.body.password.toString(), 12, (err, hash) => {
         if (err) {
             console.error("Error hashing password:", err);
@@ -48,7 +48,7 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
-    const sql = "SELECT * FROM admin WHERE mail = ?";
+    const sql = "SELECT * FROM user WHERE Email = ?";
     db.query(sql, [email], (err, results) => {
         if (err) {
             console.error("Error querying user:", err);
@@ -63,7 +63,7 @@ app.post("/login", (req, res) => {
                 .json({ status: "error", message: "Login failed. Email not found." });
         }
         const user = results[0];
-        bcrypt.compare(password, user.Password, (err, isMatch) => {
+        bcrypt.compare(password, user.PasswordHash, (err, isMatch) => {
             if (err) {
                 console.error("Error comparing passwords:", err);
                 return res.status(500).json({
@@ -74,16 +74,16 @@ app.post("/login", (req, res) => {
             }
             console.log("Password comparison result:", isMatch);
             if (isMatch) {
-                const name = results[0].name;
+                const Email = results[0].Email;
                 const token = jwt.sign(
                     {
-                        name,
+                        Email,
                     },
                     "jwt-token",
                     { expiresIn: "1d" }
                 );
 
-                res.cookie('token', token);
+                res.cookie("token", token);
 
                 return res.json({ status: "success" });
             } else {
@@ -95,6 +95,74 @@ app.post("/login", (req, res) => {
         });
     });
 });
+
+const verifyUser = (req, res, next) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.json({ Error: "you are not authenticated" });
+    } else {
+        jwt.verify(token, "jwt-token", (err, decoded) => {
+            if (err) {
+                return res.json({ Error: "token not correct" });
+            } else {
+                req.Email = decoded.Email;
+                next();
+            }
+        });
+    }
+};
+
+app.get("/management", (req, res) => {
+    // Extract email from the JWT token
+    const token = req.cookies.token;
+    console.log(token);
+    if (!token) {
+        return res.json({ Error: "you are not authenticated" });
+    }
+    jwt.verify(token, "jwt-token", (err, decoded) => {
+        if (err) {
+            return res.json({ Error: "token not correct" });
+        } else {
+            const email = decoded.Email;
+            // Fetch dashboard statistics from the database based on the user's email
+            const sqlAdminCount = `SELECT COUNT(*) AS adminCount FROM user`;
+            const sqlPlayerCount = `SELECT COUNT(*) AS playerCount FROM player`;
+            const sqlMonthlyRevenue = `SELECT SUM(Amount) AS monthlyRevenue FROM financialtransaction WHERE MONTH(date) = MONTH(NOW())`;
+
+            db.query(sqlAdminCount, (err, adminCountResult) => {
+                if (err) {
+                    console.error("Error fetching admin count:", err);
+                    return res.status(500).json({ status: "error", message: "Error fetching admin count" });
+                }
+                const adminCount = adminCountResult[0].adminCount;
+
+                db.query(sqlPlayerCount, (err, playerCountResult) => {
+                    if (err) {
+                        console.error("Error fetching player count:", err);
+                        return res.status(500).json({ status: "error", message: "Error fetching player count" });
+                    }
+                    const playerCount = playerCountResult[0].playerCount;
+
+                    db.query(sqlMonthlyRevenue, (err, monthlyRevenueResult) => {
+                        if (err) {
+                            console.error("Error fetching monthly revenue:", err);
+                            return res.status(500).json({ status: "error", message: "Error fetching monthly revenue" });
+                        }
+                        const monthlyRevenue = monthlyRevenueResult[0].monthlyRevenue;
+
+                        return res.json({ adminCount, playerCount, monthlyRevenue });
+                    });
+                });
+            });
+        }
+    });
+});
+
+
+
+// app.get("/management", verifyUser, (req, res) => {
+//     return res.json({ stats: "success", Email: req.Email });
+// });
 
 app.listen(8081, () => {
     console.log("server is running on port 8081");
