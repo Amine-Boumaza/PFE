@@ -113,9 +113,7 @@ const verifyUser = (req, res, next) => {
 };
 
 app.get("/management", (req, res) => {
-    // Extract email from the JWT token
     const token = req.cookies.token;
-    console.log(token);
     if (!token) {
         return res.json({ Error: "you are not authenticated" });
     }
@@ -124,11 +122,18 @@ app.get("/management", (req, res) => {
             return res.json({ Error: "token not correct" });
         } else {
             const email = decoded.Email;
-            // Fetch dashboard statistics from the database based on the user's email
+
+            // Define all SQL queries
             const sqlAdminCount = `SELECT COUNT(*) AS adminCount FROM user`;
             const sqlPlayerCount = `SELECT COUNT(*) AS playerCount FROM player`;
             const sqlMonthlyRevenue = `SELECT SUM(Amount) AS monthlyRevenue FROM financialtransaction WHERE MONTH(date) = MONTH(NOW())`;
+            const next7DaysSessionsSql = `
+                SELECT * FROM trainingsession
+                WHERE date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+            `;
+            const usersSql = `SELECT * FROM user`;
 
+            // Execute all SQL queries in parallel
             db.query(sqlAdminCount, (err, adminCountResult) => {
                 if (err) {
                     console.error("Error fetching admin count:", err);
@@ -150,13 +155,31 @@ app.get("/management", (req, res) => {
                         }
                         const monthlyRevenue = monthlyRevenueResult[0].monthlyRevenue;
 
-                        return res.json({ adminCount, playerCount, monthlyRevenue });
+                        db.query(next7DaysSessionsSql, (err, sessionsResult) => {
+                            if (err) {
+                                console.error("Error fetching session data:", err);
+                                return res.status(500).json({ status: "error", message: "Error fetching session data" });
+                            }
+                            const sessions = sessionsResult;
+
+                            db.query(usersSql, (err, usersResult) => {
+                                if (err) {
+                                    console.error("Error fetching users data:", err);
+                                    return res.status(500).json({ status: "error", message: "Error fetching users data" });
+                                }
+                                const users = usersResult;
+
+                                return res.json({ adminCount, playerCount, monthlyRevenue, sessions, users });
+                            });
+                        });
                     });
                 });
             });
         }
     });
 });
+
+
 
 
 

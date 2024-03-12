@@ -1,15 +1,19 @@
-import React from "react";
-import { SessionsData } from "./data/sessionsData";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function SessionTable() {
-  const next7DaysSessions = SessionsData.filter((session) => {
-    const sessionDate = new Date(session.date);
-    const today = new Date();
-    const sevenDaysFromNow = new Date(today);
-    sevenDaysFromNow.setDate(today.getDate() + 7);
+  const [sessions, setSessions] = useState([]);
 
-    return sessionDate >= today && sessionDate <= sevenDaysFromNow;
-  });
+  useEffect(() => {
+    // Fetch session data from the backend
+    axios.get("http://localhost:8081/management")
+      .then(response => {
+        setSessions(response.data.sessions);
+      })
+      .catch(error => {
+        console.error("Error fetching session data:", error);
+      });
+  }, []);
 
   return (
     <div className="antialiased font-sans">
@@ -42,7 +46,7 @@ export default function SessionTable() {
                     </tr>
                   </thead>
                   <tbody>
-                    {next7DaysSessions.map((session, index) => (
+                    {sessions.map((session, index) => (
                       <tr key={index}>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                           {session.category}
