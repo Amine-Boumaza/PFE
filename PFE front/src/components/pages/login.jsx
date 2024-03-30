@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 
-export default function login() {
+export default function login(props) {
     const [values, setvalues] = useState({
         email: "",
         password: "",
@@ -17,6 +17,7 @@ export default function login() {
                 if (res.data.status === "success") {
                     navigate("/management");
                     axios.defaults.withCredentials = true;
+                    props.setauth(true);
                 } else {
                     alert("Login failed. Please check your credentials.");
                 }

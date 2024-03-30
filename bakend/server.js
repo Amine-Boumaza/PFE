@@ -85,7 +85,7 @@ app.post("/login", (req, res) => {
 
                 res.cookie("token", token);
 
-                return res.json({ status: "success" });
+                return res.status(200).json({ status: "success" });
             } else {
                 return res.status(401).json({
                     status: "error",
@@ -115,7 +115,7 @@ const verifyUser = (req, res, next) => {
 app.get("/management", (req, res) => {
     const token = req.cookies.token;
     if (!token) {
-        return res.json({ Error: "you are not authenticated" });
+        return res.status(400).json({ Error: "you are not authenticated" });
     }
     jwt.verify(token, "jwt-token", (err, decoded) => {
         if (err) {
