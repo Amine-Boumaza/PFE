@@ -8,12 +8,14 @@ export default function SessionTable() {
     // Fetch session data from the backend
     axios.get("http://localhost:8081/management")
       .then(response => {
-        setSessions(response.data.sessions);
+        setSessions(response.data.next7DaysSessions); // Assuming 'next7DaysSessions' is the correct key in the response data
       })
       .catch(error => {
         console.error("Error fetching session data:", error);
       });
   }, []);
+
+  console.log("sessions:", sessions);
 
   return (
     <div className="antialiased font-sans">
@@ -32,16 +34,16 @@ export default function SessionTable() {
                   <thead>
                     <tr>
                       <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Category
+                        Session ID
                       </th>
                       <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Team
+                        Team ID
                       </th>
                       <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Date
                       </th>
                       <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Coach
+                        Time
                       </th>
                     </tr>
                   </thead>
@@ -49,16 +51,16 @@ export default function SessionTable() {
                     {sessions.map((session, index) => (
                       <tr key={index}>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {session.category}
+                          {session.SessionID}
                         </td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {session.team}
+                          {session.TeamID}
                         </td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {session.date}
+                          {session.Date}
                         </td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {session.coach}
+                          {session.Time}
                         </td>
                       </tr>
                     ))}

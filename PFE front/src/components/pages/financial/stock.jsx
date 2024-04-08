@@ -1,15 +1,6 @@
 import React from "react";
 
-const data = [
-    {
-        sport: "Football",
-        quantity: 10,
-        amount: "$100",
-        description: "Official match ball",
-        photo: "football.jpg",
-    },
-    // Add more data objects as needed
-];
+
 
 export default function Stock() {
     return (

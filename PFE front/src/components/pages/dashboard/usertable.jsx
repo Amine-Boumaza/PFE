@@ -7,12 +7,15 @@ export default function UserTable() {
   useEffect(() => {
     axios.get("http://localhost:8081/management")
       .then(response => {
+        console.log("Users data received:", response.data.users); // Log the users data received
         setUsers(response.data.users);
       })
       .catch(error => {
         console.error("Error fetching users:", error);
       });
   }, []);
+
+  console.log("Users:", users); // Log the users state
 
   return (
     <div className="antialiased font-sans">
@@ -43,17 +46,17 @@ export default function UserTable() {
                     <tr key={index}>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
-                          {user.name}
+                          {user.UserID}
                         </p>
                       </td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
-                          {user.role}
+                          {user.Role}
                         </p>
                       </td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
-                          {user.createdAt}
+                          {user.TenantID}
                         </p>
                       </td>
                     </tr>
