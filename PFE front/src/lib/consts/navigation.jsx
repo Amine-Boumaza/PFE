@@ -32,6 +32,13 @@ export const DASHBOARD_SIDEBAR_LINKS = [
     // sessions
   },
   {
+    key: "team",
+    label: "Team",
+    path: "/management/teams",
+    // team
+  }
+  ,
+  {
     key: "doctor form",
     label: "Doctor Form",
     path: "/doctorForm",

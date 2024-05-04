@@ -40,7 +40,7 @@ function App() {
           <Route path="activity" element={<Activity />} />
           <Route path="financialmanagement" element={<FinancialManagement />} />
           <Route path="sessions" element={<Sessions />} />
-          team
+          {/* <Route path="teams" element={<Teams />} /> */}
         </Route>
       </Routes>
     </Router>
