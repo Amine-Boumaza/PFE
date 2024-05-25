@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../../Context/AuthContext";
 import classNames from "classnames";
 import { Link, useLocation } from "react-router-dom";
 import { FcBullish } from "react-icons/fc";
 import { HiOutlineLogout } from "react-icons/hi";
 import {
-  DASHBOARD_SIDEBAR_LINKS,
+  // COACH_SIDEBAR_LINKS,
+  // MANAGER_SIDEBAR_LINKS,
+  ADMIN_SIDEBAR_LINKS,
+  // DOCTOR_SIDEBAR_LINKS,
+  // FINANCE_SIDEBAR_LINKS,
   DASHBOARD_SIDEBAR_BOTTOM_LINKS,
 } from "../../lib/consts/navigation";
 
@@ -13,6 +18,7 @@ const linkClass =
 
 export default function Sidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { CurrentUser } = useContext(AuthContext);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -20,6 +26,56 @@ export default function Sidebar() {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
+  };
+  const AccessCheck = () => {
+    if (CurrentUser.Role === "admin")
+      return (
+        <div className="flex flex-col gap-0.5">
+          {ADMIN_SIDEBAR_LINKS.map((link) => (
+            <SidebarLink key={link.key} link={link} />
+          ))}
+        </div>
+      );
+    if (CurrentUser.Role === "coach")
+      return (
+        <div className="flex flex-col gap-0.5">
+          {COACH_SIDEBAR_LINKS.map((link) => (
+            <SidebarLink key={link.key} link={link} />
+          ))}
+        </div>
+      );
+    if (CurrentUser.Role === "player")
+      return (
+        <div className="flex flex-col gap-0.5">
+          {COACH_SIDEBAR_LINKS.map((link) => (
+            <SidebarLink key={link.key} link={link} />
+          ))}
+        </div>
+      );
+    if (CurrentUser.Role === "doctor")
+      return (
+        <div className="flex flex-col gap-0.5">
+          {DOCTOR_SIDEBAR_LINKS.map((link) => (
+            <SidebarLink key={link.key} link={link} />
+          ))}
+        </div>
+      );
+    if (CurrentUser.Role === "FinanceManager")
+      return (
+        <div className="flex flex-col gap-0.5">
+          {FINANCE_SIDEBAR_LINKS.map((link) => (
+            <SidebarLink key={link.key} link={link} />
+          ))}
+        </div>
+      );
+    if (CurrentUser.Role === "mannager")
+      return (
+        <div className="flex flex-col gap-0.5">
+          {MANAGER_SIDEBAR_LINKS.map((link) => (
+            <SidebarLink key={link.key} link={link} />
+          ))}
+        </div>
+      );
   };
 
   return (
@@ -35,7 +91,7 @@ export default function Sidebar() {
       </div>
 
       <div className="flex flex-col gap-0.5">
-        {DASHBOARD_SIDEBAR_LINKS.map((link) => (
+        {ADMIN_SIDEBAR_LINKS.map((link) => (
           <SidebarLink key={link.key} link={link} />
         ))}
       </div>

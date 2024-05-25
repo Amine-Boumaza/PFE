@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 
-import Sessions2 from "./sessions2.jsx";
+import Sessions2 from "../sessions/sessions2.jsx";
+import CoachFillForm from "../sessions/session3.jsx"
+
 
 export default function Sessions() {
   const [sessions, setSessions] = useState([]);
@@ -196,6 +198,10 @@ export default function Sessions() {
 
       <div>
         <Sessions2 />
+      </div>
+
+      <div>
+        <CoachFillForm />
       </div>
 
     </div>

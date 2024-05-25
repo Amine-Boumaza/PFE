@@ -5,7 +5,7 @@ import {
   HiOutlineCog,
 } from "react-icons/hi";
 
-export const DASHBOARD_SIDEBAR_LINKS = [
+export const ADMIN_SIDEBAR_LINKS = [
   {
     key: "dashboard",
     label: "Dashboard",
@@ -34,14 +34,12 @@ export const DASHBOARD_SIDEBAR_LINKS = [
   {
     key: "team",
     label: "Team",
-    path: "/management/teams",
-    // team
-  }
-  ,
+    path: "/management/team",
+  },
   {
     key: "doctor form",
     label: "Doctor Form",
-    path: "/doctorForm",
+    path: "/management/doctorForm",
   },
 ];
 
