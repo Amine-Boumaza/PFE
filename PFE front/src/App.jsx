@@ -8,6 +8,11 @@ import {
 import Login from "./components/pages/login";
 import Layout from "./components/shared/layout";
 import Dashboard from "./components/pages/dashboard";
+import DashboardCoach from "./components/pages/dashboardCoach";
+import DashboardFnMannager from "./components/pages/dashboardFnMannager";
+import DashboardDoctor from "./components/pages/dashboardDoctor";
+import DashboardMannager from "./components/pages/dashboardMannager";
+
 import FinancialManagement from "./components/pages/management codes/financialManagement";
 import Activity from "./components/pages/management codes/activity";
 import Sessions from "./components/pages/management codes/sessions";
@@ -74,7 +79,8 @@ function App() {
                   </ProtectedRoutes>
                 }
               />
-              <Route path="team"
+              <Route
+                path="team"
                 element={
                   <ProtectedRoutes>
                     <Team />
@@ -143,7 +149,8 @@ function App() {
                   }
                 />
 
-                <Route path="team"
+                <Route
+                  path="team"
                   element={
                     <ProtectedRoutes>
                       <Team />
@@ -197,6 +204,14 @@ function App() {
                 }
               >
                 <Route
+                  index
+                  element={
+                    <ProtectedRoutes>
+                      <DashboardFnMannager />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
                   path="financialmanagement"
                   element={
                     <ProtectedRoutes>
@@ -223,6 +238,14 @@ function App() {
                 }
               >
                 {/* Doctor Dashboard  */}
+                <Route
+                  index
+                  element={
+                    <ProtectedRoutes>
+                      <DashboardDoctor />
+                    </ProtectedRoutes>
+                  }
+                />
               </Route>
             </Routes>
           </Router>
@@ -241,14 +264,113 @@ function App() {
                   </ProtectedRoutes>
                 }
               >
-                {/* Coach Dashboard  */}
-                {/* Coach Sessions  */}
+
+                <Route
+                  path="activity"
+                  element={
+                    <ProtectedRoutes>
+                      <Activity />
+                    </ProtectedRoutes>
+                  }
+                />
+
+                <Route
+                  index
+                  element={
+                    <ProtectedRoutes>
+                      <DashboardCoach />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="sessions"
+                  element={
+                    <ProtectedRoutes>
+                      <Sessions />
+                    </ProtectedRoutes>
+                  }
+                />
+
+                <Route
+                  path="team"
+                  element={
+                    <ProtectedRoutes>
+                      <Team />
+                    </ProtectedRoutes>
+                  }
+                />
               </Route>
             </Routes>
           </Router>
         );
       case "mannager":
-        return;
+        return (
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />}></Route>
+              <Route path="/register" element={<Register />}></Route>
+              <Route
+                path="/management/"
+                element={
+                  <ProtectedRoutes>
+                    <Layout />
+                  </ProtectedRoutes>
+                }
+              >
+                <Route
+                  index
+                  element={
+                    <ProtectedRoutes>
+                      <DashboardMannager />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="activity"
+                  element={
+                    <ProtectedRoutes>
+                      <Activity />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="financialmanagement"
+                  element={
+                    <ProtectedRoutes>
+                      <FinancialManagement />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="sessions"
+                  element={
+                    <ProtectedRoutes>
+                      <Sessions />
+                    </ProtectedRoutes>
+                  }
+                />
+
+                <Route
+                  path="team"
+                  element={
+                    <ProtectedRoutes>
+                      <Team />
+                    </ProtectedRoutes>
+                  }
+                />
+
+                <Route
+                  path="doctorForm"
+                  element={
+                    <ProtectedRoutes>
+                      <Doctor />
+                    </ProtectedRoutes>
+                  }
+                />
+              </Route>
+            </Routes>
+          </Router>
+        );
       default:
         return (
           <Router>

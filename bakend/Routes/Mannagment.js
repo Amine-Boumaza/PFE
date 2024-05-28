@@ -1,5 +1,10 @@
 import express from "express";
-import { GetAllTeams, GetAllRapports } from "../Controllers/Mannagment.js";
+import {
+  GetAllTeams,
+  GetAllRapports,
+  GetUsersN,
+  GetTeamsN,
+} from "../Controllers/Mannagment.js";
 import {
   GetCoachData,
   PlayersList,
@@ -8,8 +13,16 @@ import {
   GetTrainingSessions,
   GetTrainingSessionsWeakly,
   AddInjuryRapport,
+  GetCoachTeamsN,
+  PlayersNB,
 } from "../Controllers/Coach.js";
-import { GetTenents, NmbrAdmins } from "../Controllers/Admin.js";
+import {
+  GetTenents,
+  NmbrAdmins,
+  GetAllUsers,
+  NmbrUsers,
+  NmbrTenants,
+} from "../Controllers/Admin.js";
 import {
   GetInjuryRapports,
   AddMedicalForm,
@@ -25,15 +38,21 @@ import { player } from "../Controllers/Player.js";
 const router = express.Router();
 // Coach Links
 router.get("/coach/data", GetCoachData); // done
+router.get("/coach/GetTeamsNb", GetCoachData);
+router.get("/coach/GetPlayersNB", PlayersNB);
 router.get("/coach/list", PlayersList); // done
 router.post("/coach/Rapport", AddRapport);
 router.post("/coach/InjuryRapport", AddInjuryRapport);
-router.get("/coach/Teams", GetTeams); // done
+router.get("/coach/Teams", GetTeams);
+router.get("/coach/TeamsNB", GetCoachTeamsN); // done
 router.get("/coach/Sessions", GetTrainingSessions); //done
 router.get("/coach/SessionsWeak", GetTrainingSessionsWeakly);
 //Admin Links
-router.post("/admin/nbadmins", NmbrAdmins);
-router.post("/admin/gettenents", GetTenents);
+router.get("/admin/NbAdmins", NmbrAdmins);
+router.get("/admin/GetTenents", GetTenents);
+router.get("/admin/GetNbTenents", NmbrTenants);
+router.get("/admin/GetNbUsers", NmbrUsers);
+router.get("/admin/GetUsers", GetAllUsers);
 
 //Doctor Links
 router.get("/doctor/data", GetDoctorData); // done
@@ -45,8 +64,10 @@ router.get("/finance/transections", GetTransections); // done
 router.post("/finance/addtransections", AddTransections);
 //mannager Links
 router.get("/mannager/VerifyToken", VerifyToken);
-router.get("/mannager/GetAllTeams", GetAllTeams);
-router.get("/mannager/GetAllRapports", GetAllRapports);
+router.get("/mannager/GetAllTeams", GetAllTeams); //done used
+router.get("/mannager/GetAllRapports", GetAllRapports); //done used
+router.get("/mannager/GetUsersNb", GetUsersN);
+router.get("/mannager/GetTeamsNb", GetTeamsN);
 router.post("/mannager/Add"); // a discuter
 
 //Player Links

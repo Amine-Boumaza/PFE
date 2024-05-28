@@ -540,6 +540,36 @@ app.put("/management/session-reports/:reportId", (req, res) => {
   );
 });
 
+app.get('/api/management/manager/GetReportById', (req, res) => {
+  const reportId = req.query.ReportID;
+
+  console.log('Received request for ReportID:', reportId); // Log the received ReportID
+
+  if (!reportId) {
+    console.log('ReportID is required but not provided');
+    return res.status(400).json({ message: 'ReportID is required' });
+  }
+
+  // Query to fetch the report from the database
+  const query = 'SELECT * FROM sessionreport WHERE ReportID = ?';
+  db.query(query, [reportId], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+
+    console.log('Query results:', results); // Log the results
+
+    if (results.length === 0) {
+      console.log('No report found with the given ReportID');
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    console.log('Report found:', results[0]); // Log the found report
+    res.json(results[0]);
+  });
+});
+
 
 // Get all teams
 app.get('/management/teams', (req, res) => {
@@ -808,6 +838,136 @@ app.delete('/formresponses/:responseId', async (req, res) => {
     res.status(500).json({ error: 'Error deleting response' });
   }
 });
+
+
+app.get('/api/management/activity', (req, res) => {
+  const teamName = req.query.teamName;
+  const sessionId = req.query.sessionId;
+
+  console.log('Received request with teamName:', teamName, 'and sessionId:', sessionId);
+
+  if (!teamName || !sessionId) {
+    console.log('Missing teamName or sessionId');
+    return res.status(400).json({ message: 'Team name and session ID are required' });
+  }
+
+  // Query to fetch players
+  const playersQuery = `
+    SELECT player.PlayerID, player.Name
+    FROM player
+    WHERE player.TeamID = (
+      SELECT TeamID
+      FROM team
+      WHERE Name = ?
+    ) 
+  `;
+
+  // Query to fetch session date
+  const sessionQuery = `
+    SELECT trainingsession.Date
+    FROM trainingsession
+    WHERE trainingsession.SessionID = ?
+  `;
+
+  console.log('Executing players query:', playersQuery, 'with parameters:', [teamName, sessionId]);
+  console.log('Executing session query:', sessionQuery, 'with parameters:', [sessionId]);
+
+  db.query(playersQuery, [teamName, sessionId], (err, playersResults) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+
+    if (playersResults.length === 0) {
+      console.log('No players found for the given team');
+      return res.status(404).json({ message: 'No players found for the given team' });
+    }
+
+    // Execute the session query after fetching players
+    db.query(sessionQuery, [sessionId], (err, sessionResults) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+
+      if (sessionResults.length === 0) {
+        console.log('No session found for the given session ID');
+        return res.status(404).json({ message: 'No session found for the given session ID' });
+      }
+
+      console.log('Sending players:', playersResults);
+      console.log('Sending session date:', sessionResults[0].Date);
+
+      // Combine the players and session date and send the response
+      const responseData = {
+        players: playersResults,
+        sessionDate: sessionResults[0].Date
+      };
+      res.json(responseData);
+    });
+  });
+});
+
+app.post('/api/attendance', (req, res) => {
+  const { attendance } = req.body;
+
+  // Check if attendance property exists and is an array
+  if (!Array.isArray(attendance)) {
+    console.error('Attendance data is missing or invalid');
+    return res.status(400).send('Attendance data is missing or invalid');
+  }
+
+  // Prepare SQL query
+  const sql = 'INSERT INTO attendance (SessionID, PlayerID, Status) VALUES ?';
+
+  // Extracting attendance data to insert into database
+  const values = attendance.map(entry => [entry.sessionId, entry.playerId, entry.status]);
+
+  console.log('SQL query:', sql);
+  console.log('Values to be inserted:', values);
+
+  // Execute the query
+  db.query(sql, [values], (err, result) => {
+    if (err) {
+      console.error('Error saving attendance:', err);
+      res.status(500).send('Error saving attendance');
+    } else {
+      console.log('Attendance saved successfully');
+      res.status(200).send('Attendance saved successfully');
+    }
+  });
+});
+
+
+app.get('/management/attendance', (req, res) => {
+  console.log('Request received to fetch attendance data');
+
+  const sql = `
+  SELECT a.AttendanceID,
+  s.Date AS SessionDate,
+  p.Name AS PlayerName,
+  a.Status
+FROM attendance a
+INNER JOIN trainingsession s ON a.SessionID = s.SessionID
+INNER JOIN player p ON a.PlayerID = p.PlayerID;
+
+  `;
+
+  console.log('Executing SQL query:', sql);
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error fetching attendance data:', err);
+      res.status(500).send('Error fetching attendance data');
+    } else {
+      console.log('Attendance data retrieved successfully:', results);
+      res.json(results);
+    }
+  });
+});
+
+
+
 
 
 

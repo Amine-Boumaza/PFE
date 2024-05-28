@@ -1,6 +1,32 @@
 import jwk from "jsonwebtoken";
 import { db } from "../Connect.js";
 
+export const PlayersNB = (req, res) => {
+  const { TenantID, UserID } = req.query; // Extract TenantID and UserID from query parameters
+  const q = `SELECT COUNT(P.PlayerID) AS PlayersNb 
+             FROM team AS T, player AS P 
+             WHERE P.TenantID = ? AND T.TeamID = P.TeamID AND T.CoachID = (SELECT CoachID FROM coach WHERE UserID = ?)`;
+
+  db.query(q, [TenantID, UserID], (error, result) => {
+    if (error) return res.status(500).json(error);
+    res.json(result[0].PlayersNb); // Directly returning the count
+  });
+};
+
+export const GetCoachTeamsN = (req, res) => {
+  const { TenantID, UserID } = req.query;
+  const q = `
+    SELECT COUNT(*) AS TeamsNb 
+    FROM team 
+    WHERE TenantID = ? 
+    AND CoachID = (SELECT CoachID FROM coach WHERE UserID = ?)`;
+
+  db.query(q, [TenantID, UserID], (error, nbTeams) => {
+    if (error) return res.status(500).json(error);
+    res.json(nbTeams[0].TeamsNb);
+  });
+};
+
 export const GetCoachData = (req, res) => {
   const token = req.cookies.AccessToken;
   if (!token) return res.status(401).json("you're not logged in");
@@ -35,18 +61,33 @@ export const AddRapport = (req, res) => {
   });
 };
 export const GetTeams = (req, res) => {
-  const q = "SELECT * FROM `team` WHERE CoachID = ?";
+  const { TenantID, UserID } = req.query;
+  const q = `
+    SELECT T.TeamID AS Number, T.Name AS Name 
+    FROM team AS T
+    JOIN coach AS C ON T.CoachID = C.CoachID
+    WHERE T.TenantID = ? AND C.UserID = ?`;
 
-  db.query(q, [req.body.CoachID], (error, TeamsInfo) => {
-    if (error) return res.status(500).json(error);
-    res.json(TeamsInfo);
+  db.query(q, [TenantID, UserID], (error, results) => {
+    if (error)
+      return res
+        .status(500)
+        .json({ error: "Database query failed", details: error });
+    res.json(results);
   });
 };
+
 export const GetTrainingSessions = (req, res) => {
-  const q = "SELECT * FROM `trainingsession` WHERE TeamID = ?";
-  db.query(q, [req.body.TeamID], (error, TrainingSessions) => {
-    if (error) return res.status(500).json(error);
-    res.json(TrainingSessions);
+  const { TenantID, UserID } = req.query;
+  const q = `
+  SELECT TS.SessionID,T.Name AS NAME,TS.Date,TS.Time FROM trainingsession AS TS, coach AS C, team AS T WHERE T.TenantID = ? AND TS.TeamID = T.TeamID AND T.CoachID = C.CoachID AND C.CoachID = (SELECT CoachID FROM coach WHERE UserID =?)`;
+
+  db.query(q, [TenantID, UserID], (error, results) => {
+    if (error)
+      return res
+        .status(500)
+        .json({ error: "Database query failed", details: error });
+    res.json(results);
   });
 };
 export const GetTrainingSessionsWeakly = (req, res) => {

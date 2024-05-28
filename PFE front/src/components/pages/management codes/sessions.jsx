@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 
+
 import Sessions2 from "../sessions/sessions2.jsx";
-import CoachFillForm from "../sessions/session3.jsx"
+import SessionReportTable from "../sessions/sessionreportfull.jsx";
+import CoachFillForm from "../sessions/docformfill.jsx"
 
 
 export default function Sessions() {
@@ -198,6 +200,10 @@ export default function Sessions() {
 
       <div>
         <Sessions2 />
+      </div>
+
+      <div>
+        <SessionReportTable />
       </div>
 
       <div>
