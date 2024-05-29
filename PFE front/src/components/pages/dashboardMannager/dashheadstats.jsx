@@ -49,7 +49,7 @@ export default function DashboardStats() {
   }, []);
 
   return (
-    <div className="flex gap-4">
+    <div className="flex justify-around gap-4">
       <BoxWrapper
         label="Number Of Users"
         value={NOUsers}
@@ -62,20 +62,18 @@ export default function DashboardStats() {
       />
     </div>
   );
-}
 
-function BoxWrapper({ label, value, icon }) {
-  return (
-    <div className="flex-1 bg-white rounded-sm border border-gray-200 p-4 flex items-center">
-      <div>
-        <p className="text-sm text-gray-500 font-light mb-1">{label}</p>
-        <div className="flex items-center">
-          {icon}
-          <strong className="text-xl text-gray-700 font-semibold">
-            {value}
-          </strong>
+  function BoxWrapper({ label, value, icon }) {
+    return (
+      <div className="w-96 bg-blue-500 rounded-lg p-4 flex items-center justify-center flex-col">
+        <div className="flex flex-col justify-center">
+          <h3 className="text-white text-xl font-bold mb-1">{label}</h3>
+          <div className="flex items-center justify-center">
+            {icon}
+            <strong className="text-white text-4xl font-bold ml-2">{value}</strong>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+}  

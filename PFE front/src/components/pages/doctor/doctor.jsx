@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import DoctorViewResponses from './responsedoc';
@@ -9,6 +9,23 @@ const DoctorCreateForm = () => {
     const [questionText, setQuestionText] = useState('');
     const [questionType, setQuestionType] = useState('text');
     const [submittingForm, setSubmittingForm] = useState(false); // To track form submission state
+    const [forms, setForms] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Fetch available forms from the backend when the component mounts
+        fetchForms();
+    }, []);
+
+    const fetchForms = async () => {
+        try {
+            const response = await axios.get('http://localhost:8081/forms');
+            setForms(response.data.forms);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching forms:', error);
+        }
+    };
 
     const addQuestion = () => {
         if (questionText.trim() === '') return;
@@ -41,10 +58,23 @@ const DoctorCreateForm = () => {
             // Clear form data after successful submission
             setFormName('');
             setFormData([]);
+            // Refetch the list of forms after submission
+            fetchForms();
         } catch (error) {
             console.error('Error creating form:', error);
         } finally {
             setSubmittingForm(false); // Reset submittingForm to false after form submission completes
+        }
+    };
+
+    const deleteForm = async (formName) => {
+        try {
+            await axios.delete(`http://localhost:8081/forms/${formName}`);
+            // Refetch the list of forms after deletion
+            fetchForms();
+            console.log('Form deleted successfully');
+        } catch (error) {
+            console.error('Error deleting form:', error);
         }
     };
 
@@ -89,7 +119,6 @@ const DoctorCreateForm = () => {
                                         </td>
                                         <td className="border border-gray-400 px-4 py-2">
                                             <button onClick={() => removeQuestion(index)} className="bg-red-500 text-white px-2 py-1 mr-2">Delete</button>
-                                            {/* Add edit functionality here */}
                                         </td>
                                     </tr>
                                 ))}
@@ -102,8 +131,41 @@ const DoctorCreateForm = () => {
                         {submittingForm ? 'Submitting...' : 'Save Form'}
                     </button>
                 </div>
+            </div>
 
-
+            <div className="container mx-auto">
+                <h1 className="text-3xl font-bold mb-4">Existing Forms</h1>
+                {loading ? (
+                    <p>Loading forms...</p>
+                ) : (
+                    <table className="w-full border-collapse border border-gray-400 mb-4">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th className="border border-gray-400 px-4 py-2">Form Name</th>
+                                <th className="border border-gray-400 px-4 py-2">Questions</th>
+                                <th className="border border-gray-400 px-4 py-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {forms.map((form, index) => (
+                                <tr key={index}>
+                                    <td className="border border-gray-400 px-4 py-2">{form.formName}</td>
+                                    <td className="border border-gray-400 px-4 py-2">
+                                        <ul>
+                                            {form.formData && form.formData.length > 0 && form.formData.map((question, qIndex) => (
+                                                <li key={qIndex}>{question.text} - {question.type === 'checkmark' ? 'Yes/No' : 'Text'}</li>
+                                            ))}
+                                        </ul>
+                                    </td>
+                                    <td className="border border-gray-400 px-4 py-2">
+                                        <button onClick={() => deleteForm(form.formName)} className="bg-red-500 text-white px-2 py-1 mr-2">Delete</button>
+                                        {/* Add edit functionality here */}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
 
             <div><DoctorViewResponses /></div>

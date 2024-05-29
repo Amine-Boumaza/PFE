@@ -10,17 +10,10 @@ export default function FinancialTransactions() {
     Type: "",
     Description: "",
   });
-  const [editedFinancialTransaction, setEditedFinancialTransaction] = useState({
-    TenantID: "",
-    Date: "",
-    Amount: "",
-    Type: "",
-    Description: "",
-  });
-  const [isEditing, setIsEditing] = useState(false); // New state to control edit form visibility
+  const [isAdding, setIsAdding] = useState(false); // New state to control the visibility of the new row
+  const [editingTransaction, setEditingTransaction] = useState(null); // Transaction being edited
 
   useEffect(() => {
-    // Fetch financial transactions from the backend when component mounts
     axios
       .get("http://localhost:8081/management/financial-transactions")
       .then((response) => {
@@ -36,7 +29,6 @@ export default function FinancialTransactions() {
   }, []);
 
   const handleAddFinancialTransaction = () => {
-    // Send a POST request to add a new financial transaction
     axios
       .post(
         "http://localhost:8081/management/financial-transactions",
@@ -44,8 +36,8 @@ export default function FinancialTransactions() {
       )
       .then((response) => {
         setFinancialTransactions([
-          ...financialTransactions,
           response.data.financialTransaction,
+          ...financialTransactions, // Add new transaction to the beginning of the list
         ]);
         setNewFinancialTransaction({
           TenantID: "",
@@ -54,6 +46,7 @@ export default function FinancialTransactions() {
           Type: "",
           Description: "",
         });
+        setIsAdding(false); // Hide new row after adding
       })
       .catch((error) => {
         console.error("Error adding financial transaction:", error);
@@ -61,7 +54,6 @@ export default function FinancialTransactions() {
   };
 
   const handleDeleteFinancialTransaction = (transactionId) => {
-    // Send a DELETE request to delete a financial transaction
     axios
       .delete(
         `http://localhost:8081/management/financial-transactions/${transactionId}`
@@ -78,48 +70,26 @@ export default function FinancialTransactions() {
       });
   };
 
-  const handleEditFinancialTransaction = (transaction) => {
-    // Set the financial transaction to be edited
-    setEditedFinancialTransaction(transaction);
-    setIsEditing(true); // Show edit form
+  const handleEdit = (transaction) => {
+    setEditingTransaction(transaction); // Set the transaction being edited
   };
 
-  const handleSubmitEdit = () => {
-    // Log the data being sent to the backend
-    console.log(
-      "Edited financial transaction data:",
-      editedFinancialTransaction
-    );
-
-    // Send a PUT request to update the edited financial transaction
+  const handleSaveEdit = () => {
+    // Save the edited transaction
     axios
       .put(
-        `http://localhost:8081/management/financial-transactions/${editedFinancialTransaction.TransactionID}`,
-        editedFinancialTransaction
+        `http://localhost:8081/management/financial-transactions/${editingTransaction.TransactionID}`,
+        editingTransaction
       )
       .then((response) => {
-        // Update the financial transactions state with the edited financial transaction
         setFinancialTransactions(
-          financialTransactions.map((transaction) => {
-            if (
-              transaction.TransactionID ===
-              editedFinancialTransaction.TransactionID
-            ) {
-              return response.data.financialTransaction; // Update with the response from the server
-            }
-            return transaction;
-          })
+          financialTransactions.map((t) =>
+            t.TransactionID === editingTransaction.TransactionID
+              ? response.data.financialTransaction
+              : t
+          )
         );
-        // Clear the edited financial transaction state
-        setEditedFinancialTransaction({
-          TenantID: "",
-          Date: "",
-          Amount: "",
-          Type: "",
-          Description: "",
-          FinanceManagerID: "",
-        });
-        setIsEditing(false); // Hide edit form after submission
+        setEditingTransaction(null); // Clear the editing state
       })
       .catch((error) => {
         console.error("Error updating financial transaction:", error);
@@ -130,75 +100,20 @@ export default function FinancialTransactions() {
     <div className="container mx-auto">
       <h1 className="text-2xl font-bold my-4">Financial Transactions</h1>
 
-      {/* New Financial Transaction Form */}
       <div className="my-4">
-        <h2 className="text-xl font-semibold mb-2">
-          Add New Financial Transaction
-        </h2>
-        <div className="flex">
-          <input
-            type="text"
-            value={newFinancialTransaction.Description}
-            onChange={(e) =>
-              setNewFinancialTransaction({
-                ...newFinancialTransaction,
-                Description: e.target.value,
-              })
-            }
-            placeholder="Description"
-            className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-          />
-          <select
-            value={newFinancialTransaction.Type}
-            onChange={(e) =>
-              setNewFinancialTransaction({
-                ...newFinancialTransaction,
-                Type: e.target.value,
-              })
-            }
-            className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-          >
-            <option value="">Select Type</option>
-            <option value="Import">Import</option>
-            <option value="Export">Export</option>
-          </select>
-          <input
-            type="number"
-            value={newFinancialTransaction.Amount}
-            onChange={(e) =>
-              setNewFinancialTransaction({
-                ...newFinancialTransaction,
-                Amount: e.target.value,
-              })
-            }
-            placeholder="Amount"
-            className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-          />
-          <input
-            type="date"
-            value={newFinancialTransaction.Date}
-            onChange={(e) =>
-              setNewFinancialTransaction({
-                ...newFinancialTransaction,
-                Date: e.target.value,
-              })
-            }
-            className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-          />
+        {!isAdding && (
           <button
-            onClick={handleAddFinancialTransaction}
+            onClick={() => setIsAdding(true)}
             className="bg-blue-500 text-white px-4 py-2 rounded-md"
           >
-            Add
+            Add New Financial Transaction
           </button>
-        </div>
+        )}
       </div>
 
-      {/* Financial Transactions Table */}
       <div className="my-8">
         <h2 className="text-xl font-bold mb-4">Financial Transactions List</h2>
         <table className="w-full border-collapse">
-          {/* Table header */}
           <thead>
             <tr>
               <th className="border border-gray-300 px-4 py-2">Description</th>
@@ -208,29 +123,170 @@ export default function FinancialTransactions() {
               <th className="border border-gray-300 px-4 py-2">Actions</th>
             </tr>
           </thead>
-          {/* Table body */}
           <tbody>
-            {financialTransactions.map((transaction) => (
-              <tr key={transaction.TransactionID}>
+            {isAdding && (
+              <tr>
                 <td className="border border-gray-300 px-4 py-2">
-                  {transaction.Description}
+                  <input
+                    type="text"
+                    value={newFinancialTransaction.Description}
+                    onChange={(e) =>
+                      setNewFinancialTransaction({
+                        ...newFinancialTransaction,
+                        Description: e.target.value,
+                      })
+                    }
+                    placeholder="Description"
+                    className="border border-gray-300 rounded-md px-3 py-1"
+                  />
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {transaction.Type}
+                  <select
+                    value={newFinancialTransaction.Type}
+                    onChange={(e) =>
+                      setNewFinancialTransaction({
+                        ...newFinancialTransaction,
+                        Type: e.target.value,
+                      })
+                    }
+                    className="border border-gray-300 rounded-md px-3 py-1"
+                  >
+                    <option value="">Select Type</option>
+                    <option value="Import">Import</option>
+                    <option value="Export">Export</option>
+                  </select>
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {transaction.Amount}
+                  <input
+                    type="number"
+                    value={newFinancialTransaction.Amount}
+                    onChange={(e) =>
+                      setNewFinancialTransaction({
+                        ...newFinancialTransaction,
+                        Amount: e.target.value,
+                      })
+                    }
+                    placeholder="Amount"
+                    className="border border-gray-300 rounded-md px-3 py-1"
+                  />
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {transaction.Date}
+                  <input
+                    type="date"
+                    value={newFinancialTransaction.Date}
+                    onChange={(e) =>
+                      setNewFinancialTransaction({
+                        ...newFinancialTransaction,
+                        Date: e.target.value,
+                      })
+                    }
+                    className="border border-gray-300 rounded-md px-3 py-1"
+                  />
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   <button
-                    onClick={() => handleEditFinancialTransaction(transaction)}
-                    className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                    onClick={handleAddFinancialTransaction}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
                   >
-                    Edit
+                    Save
                   </button>
+                  <button
+                    onClick={() => setIsAdding(false)}
+                    className="bg-gray-500 text-white px-4 py-2 rounded-md ml-2"
+                  >
+                    Cancel
+                  </button>
+                </td>
+              </tr>
+            )}
+            {financialTransactions.map((transaction) => (
+              <tr key={transaction.TransactionID}>
+                <td className="border border-gray-300 px-4 py-2">
+                  {editingTransaction === transaction ? (
+                    <input
+                      type="text"
+                      value={transaction.Description}
+                      onChange={(e) =>
+                        setEditingTransaction({
+                          ...transaction,
+                          Description: e.target.value,
+                        })
+                      }
+                      className="border border-gray-300 rounded-md px-3 py-1"
+                    />
+                  ) : (
+                    transaction.Description
+                  )}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {editingTransaction === transaction ? (
+                    <select
+                      value={transaction.Type}
+                      onChange={(e) =>
+                        setEditingTransaction({
+                          ...transaction,
+                          Type: e.target.value,
+                        })
+                      }
+                      className="border border-gray-300 rounded-md px-3 py-1"
+                    >
+                      <option value="Import">Import</option>
+                      <option value="Export">Export</option>
+                    </select>
+                  ) : (
+                    transaction.Type
+                  )}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {editingTransaction === transaction ? (
+                    <input
+                      type="number"
+                      value={transaction.Amount}
+                      onChange={(e) =>
+                        setEditingTransaction({
+                          ...transaction,
+                          Amount: e.target.value,
+                        })
+                      }
+                      className="border border-gray-300 rounded-md px-3 py-1"
+                    />
+                  ) : (
+                    transaction.Amount
+                  )}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {editingTransaction === transaction ? (
+                    <input
+                      type="date"
+                      value={transaction.Date}
+                      onChange={(e) =>
+                        setEditingTransaction({
+                          ...transaction,
+                          Date: e.target.value,
+                        })
+                      }
+                      className="border border-gray-300 rounded-md px-3 py-1"
+                    />
+                  ) : (
+                    transaction.Date
+                  )}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {editingTransaction === transaction ? (
+                    <button
+                      onClick={handleSaveEdit}
+                      className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                    >
+                      Save
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleEdit(transaction)}
+                      className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                    >
+                      Edit
+                    </button>
+                  )}
                   <button
                     onClick={() =>
                       handleDeleteFinancialTransaction(
@@ -247,72 +303,6 @@ export default function FinancialTransactions() {
           </tbody>
         </table>
       </div>
-
-      {/* Edit Financial Transaction Form */}
-      {isEditing && (
-        <div className="my-4">
-          <h2 className="text-xl font-semibold mb-2">
-            Edit Financial Transaction
-          </h2>
-          <div className="flex">
-            <input
-              type="text"
-              value={editedFinancialTransaction.Description}
-              onChange={(e) =>
-                setEditedFinancialTransaction({
-                  ...editedFinancialTransaction,
-                  Description: e.target.value,
-                })
-              }
-              placeholder="Description"
-              className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-            />
-            <select
-              value={editedFinancialTransaction.Type}
-              onChange={(e) =>
-                setEditedFinancialTransaction({
-                  ...editedFinancialTransaction,
-                  Type: e.target.value,
-                })
-              }
-              className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-            >
-              <option value="">Select Type</option>
-              <option value="Import">Import</option>
-              <option value="Export">Export</option>
-            </select>
-            <input
-              type="number"
-              value={editedFinancialTransaction.Amount}
-              onChange={(e) =>
-                setEditedFinancialTransaction({
-                  ...editedFinancialTransaction,
-                  Amount: e.target.value,
-                })
-              }
-              placeholder="Amount"
-              className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-            />
-            <input
-              type="date"
-              value={editedFinancialTransaction.Date}
-              onChange={(e) =>
-                setEditedFinancialTransaction({
-                  ...editedFinancialTransaction,
-                  Date: e.target.value,
-                })
-              }
-              className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-            />
-            <button
-              onClick={handleSubmitEdit}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

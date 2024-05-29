@@ -73,14 +73,16 @@ export default function DashboardStats() {
 
 function BoxWrapper({ label, value, icon }) {
   return (
-    <div className="flex-1 bg-white rounded-sm border border-gray-200 p-4 flex items-center">
-      <div>
-        <p className="text-sm text-gray-500 font-light mb-1">{label}</p>
-        <div className="flex items-center">
-          {icon}
-          <strong className="text-xl text-gray-700 font-semibold">
-            {value}
-          </strong>
+    <div className="flex-1">
+      <h3 className="text-xl font-bold">{label}</h3>
+      <div className="bg-white rounded-sm border border-gray-200 p-4 flex items-center">
+        <div>
+          <div className="flex items-center">
+            {icon}
+            <strong className="text-xl text-gray-700 font-semibold">
+              {value}
+            </strong>
+          </div>
         </div>
       </div>
     </div>

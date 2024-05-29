@@ -7,106 +7,85 @@ export default function SessionReports() {
         ReportText: "",
         CreatedAt: ""
     });
-    const [editedSessionReport, setEditedSessionReport] = useState({
-        ReportID: "",
-        ReportText: "",
-        CreatedAt: ""
-    });
+    const [editingReport, setEditingReport] = useState(null); // Session report being edited
+    const [isAdding, setIsAdding] = useState(false); // State to control the visibility of the new report form
 
     useEffect(() => {
         // Fetch session reports from the backend when component mounts
-        axios.get("http://localhost:8081/management/session-reports")
-            .then(response => {
+        axios
+            .get("http://localhost:8081/management/session-reports")
+            .then((response) => {
                 setSessionReports(response.data.sessionReports);
                 console.log("Fetched session reports:", response.data.sessionReports);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Error fetching session reports:", error);
             });
     }, []);
 
     const handleAddSessionReport = () => {
         // Send a POST request to add a new session report
-        axios.post("http://localhost:8081/management/session-reports", newSessionReport)
-            .then(response => {
-                setSessionReports([...sessionReports, response.data.sessionReport]);
+        axios
+            .post("http://localhost:8081/management/session-reports", newSessionReport)
+            .then((response) => {
+                setSessionReports([
+                    response.data.sessionReport,
+                    ...sessionReports
+                ]);
                 setNewSessionReport({ ReportText: "", CreatedAt: "" });
+                setIsAdding(false); // Hide new row after adding
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Error adding session report:", error);
             });
     };
 
     const handleDeleteSessionReport = (reportId) => {
         // Send a DELETE request to delete a session report
-        axios.delete(`http://localhost:8081/management/session-reports/${reportId}`)
+        axios
+            .delete(`http://localhost:8081/management/session-reports/${reportId}`)
             .then(() => {
                 setSessionReports(sessionReports.filter(report => report.ReportID !== reportId));
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Error deleting session report:", error);
             });
     };
 
-    const handleEditSessionReport = (report) => {
-        // Set the session report to be edited
-        setEditedSessionReport(report);
+    const handleEdit = (report) => {
+        setEditingReport(report); // Set the session report being edited
     };
 
-    const handleSubmitEdit = () => {
-        // Log the data being sent to the backend
-        console.log("Edited session report data:", editedSessionReport);
-
-        // Send a PUT request to update the edited session report
-        axios.put(`http://localhost:8081/management/session-reports/${editedSessionReport.ReportID}`, editedSessionReport)
-            .then(response => {
-                // Update the session reports state with the edited session report
-                setSessionReports(sessionReports.map(report => {
-                    if (report.ReportID === editedSessionReport.ReportID) {
-                        return response.data.sessionReport; // Update with the response from the server
-                    }
-                    return report;
-                }));
-                // Clear the edited session report state
-                setEditedSessionReport({ ReportID: "", ReportText: "", CreatedAt: "" });
+    const handleSaveEdit = () => {
+        // Save the edited session report
+        axios
+            .put(`http://localhost:8081/management/session-reports/${editingReport.ReportID}`, editingReport)
+            .then((response) => {
+                setSessionReports(sessionReports.map((report) =>
+                    report.ReportID === editingReport.ReportID ? response.data.sessionReport : report
+                ));
+                setEditingReport(null); // Clear the editing state
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Error updating session report:", error);
             });
     };
-
 
     return (
         <div className="container mx-auto">
             <h1 className="text-2xl font-bold my-4">Session Reports</h1>
 
-            {/* New Session Report Form */}
             <div className="my-4">
-                <h2 className="text-xl font-semibold mb-2">Add New Session Report</h2>
-                <div className="flex">
-                    <input
-                        type="text"
-                        value={newSessionReport.ReportText}
-                        onChange={(e) => setNewSessionReport({ ...newSessionReport, ReportText: e.target.value })}
-                        placeholder="Report Text"
-                        className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-                    />
-                    <input
-                        type="date"
-                        value={newSessionReport.CreatedAt}
-                        onChange={(e) => setNewSessionReport({ ...newSessionReport, CreatedAt: e.target.value })}
-                        className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-                    />
+                {!isAdding && (
                     <button
-                        onClick={handleAddSessionReport}
+                        onClick={() => setIsAdding(true)}
                         className="bg-blue-500 text-white px-4 py-2 rounded-md"
                     >
-                        Add
+                        Add New Session Report
                     </button>
-                </div>
+                )}
             </div>
 
-            {/* Session Reports Table */}
             <div className="my-8">
                 <h2 className="text-xl font-bold mb-4">Session Reports List</h2>
                 <table className="w-full border-collapse">
@@ -118,17 +97,93 @@ export default function SessionReports() {
                         </tr>
                     </thead>
                     <tbody>
-                        {sessionReports.map(report => (
-                            <tr key={report.ReportID}>
-                                <td className="border border-gray-300 px-4 py-2">{report.ReportText}</td>
-                                <td className="border border-gray-300 px-4 py-2">{report.CreatedAt}</td>
+                        {isAdding && (
+                            <tr>
+                                <td className="border border-gray-300 px-4 py-2">
+                                    <input
+                                        type="text"
+                                        value={newSessionReport.ReportText}
+                                        onChange={(e) => setNewSessionReport({ ...newSessionReport, ReportText: e.target.value })}
+                                        placeholder="Report Text"
+                                        className="border border-gray-300 rounded-md px-3 py-1"
+                                    />
+                                </td>
+                                <td className="border border-gray-300 px-4 py-2">
+                                    <input
+                                        type="date"
+                                        value={newSessionReport.CreatedAt}
+                                        onChange={(e) => setNewSessionReport({ ...newSessionReport, CreatedAt: e.target.value })}
+                                        className="border border-gray-300 rounded-md px-3 py-1"
+                                    />
+                                </td>
                                 <td className="border border-gray-300 px-4 py-2">
                                     <button
-                                        onClick={() => handleEditSessionReport(report)}
-                                        className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                                        onClick={handleAddSessionReport}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded-md"
                                     >
-                                        Edit
+                                        Save
                                     </button>
+                                    <button
+                                        onClick={() => setIsAdding(false)}
+                                        className="bg-gray-500 text-white px-4 py-2 rounded-md ml-2"
+                                    >
+                                        Cancel
+                                    </button>
+                                </td>
+                            </tr>
+                        )}
+                        {sessionReports.map((report) => (
+                            <tr key={report.ReportID}>
+                                <td className="border border-gray-300 px-4 py-2">
+                                    {editingReport === report ? (
+                                        <input
+                                            type="text"
+                                            value={report.ReportText}
+                                            onChange={(e) =>
+                                                setEditingReport({
+                                                    ...report,
+                                                    ReportText: e.target.value,
+                                                })
+                                            }
+                                            className="border border-gray-300 rounded-md px-3 py-1"
+                                        />
+                                    ) : (
+                                        report.ReportText
+                                    )}
+                                </td>
+                                <td className="border border-gray-300 px-4 py-2">
+                                    {editingReport === report ? (
+                                        <input
+                                            type="date"
+                                            value={report.CreatedAt}
+                                            onChange={(e) =>
+                                                setEditingReport({
+                                                    ...report,
+                                                    CreatedAt: e.target.value,
+                                                })
+                                            }
+                                            className="border border-gray-300 rounded-md px-3 py-1"
+                                        />
+                                    ) : (
+                                        report.CreatedAt
+                                    )}
+                                </td>
+                                <td className="border border-gray-300 px-4 py-2">
+                                    {editingReport === report ? (
+                                        <button
+                                            onClick={handleSaveEdit}
+                                            className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                                        >
+                                            Save
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleEdit(report)}
+                                            className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                                        >
+                                            Edit
+                                        </button>
+                                    )}
                                     <button
                                         onClick={() => handleDeleteSessionReport(report.ReportID)}
                                         className="bg-red-500 text-white py-1 px-3 rounded"
@@ -141,35 +196,6 @@ export default function SessionReports() {
                     </tbody>
                 </table>
             </div>
-
-            {/* Edit Session Report Form */}
-            {editedSessionReport.ReportID !== "" && (
-                <div className="my-4">
-                    <h2 className="text-xl font-semibold mb-2">Edit Session Report</h2>
-                    <div className="flex">
-                        <input
-                            type="text"
-                            value={editedSessionReport.ReportText}
-                            onChange={(e) => setEditedSessionReport({ ...editedSessionReport, ReportText: e.target.value })}
-                            placeholder="Report Text"
-                            className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-                        />
-                        <input
-                            type="date"
-                            value={editedSessionReport.CreatedAt}
-                            onChange={(e) => setEditedSessionReport({ ...editedSessionReport, CreatedAt: e.target.value })}
-                            className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-                        />
-                        <button
-                            onClick={handleSubmitEdit}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                        >
-                            Save
-                        </button>
-                    </div>
-                </div>
-            )}
-
         </div>
     );
 }

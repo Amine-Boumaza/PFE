@@ -6,17 +6,15 @@ export default function Team() {
     const [teams, setTeams] = useState([]);
     const [newTeam, setNewTeam] = useState({
         Name: "",
-        CoachID: "",
+        CoachID: ""
     });
-    const [editedTeam, setEditedTeam] = useState({
-        TeamID: "",
-        Name: "",
-        CoachID: "",
-    });
+    const [editingTeam, setEditingTeam] = useState(null); // Team being edited
+    const [isAdding, setIsAdding] = useState(false); // State to control the visibility of the new team form
 
     useEffect(() => {
         // Fetch teams from the backend when component mounts
-        axios.get("http://localhost:8081/management/teams")
+        axios
+            .get("http://localhost:8081/management/teams")
             .then(response => {
                 setTeams(response.data.teams);
                 console.log("Fetched teams:", response.data.teams);
@@ -28,10 +26,12 @@ export default function Team() {
 
     const handleAddTeam = () => {
         // Send a POST request to add a new team
-        axios.post("http://localhost:8081/management/teams", newTeam)
+        axios
+            .post("http://localhost:8081/management/teams", newTeam)
             .then(response => {
-                setTeams([...teams, response.data.team]);
+                setTeams([response.data.team, ...teams]);
                 setNewTeam({ Name: "", CoachID: "" });
+                setIsAdding(false); // Hide new row after adding
             })
             .catch(error => {
                 console.error("Error adding team:", error);
@@ -40,7 +40,8 @@ export default function Team() {
 
     const handleDeleteTeam = (teamId) => {
         // Send a DELETE request to delete a team
-        axios.delete(`http://localhost:8081/management/teams/${teamId}`)
+        axios
+            .delete(`http://localhost:8081/management/teams/${teamId}`)
             .then(() => {
                 setTeams(teams.filter(team => team.TeamID !== teamId));
             })
@@ -49,24 +50,19 @@ export default function Team() {
             });
     };
 
-    const handleEditTeam = (team) => {
-        // Set the team to be edited
-        setEditedTeam(team);
+    const handleEdit = (team) => {
+        setEditingTeam(team); // Set the team being edited
     };
 
-    const handleSubmitEdit = () => {
-        // Send a PUT request to update the edited team
-        axios.put(`http://localhost:8081/management/teams/${editedTeam.TeamID}`, editedTeam)
+    const handleSaveEdit = () => {
+        // Save the edited team
+        axios
+            .put(`http://localhost:8081/management/teams/${editingTeam.TeamID}`, editingTeam)
             .then(response => {
-                // Update the teams state with the edited team
-                setTeams(teams.map(team => {
-                    if (team.TeamID === editedTeam.TeamID) {
-                        return response.data.team; // Update with the response from the server
-                    }
-                    return team;
-                }));
-                // Clear the edited team state
-                setEditedTeam({ TeamID: "", Name: "", CoachID: "" });
+                setTeams(teams.map(team =>
+                    team.TeamID === editingTeam.TeamID ? response.data.team : team
+                ));
+                setEditingTeam(null); // Clear the editing state
             })
             .catch(error => {
                 console.error("Error updating team:", error);
@@ -80,29 +76,14 @@ export default function Team() {
 
                 {/* New Team Form */}
                 <div className="my-4">
-                    <h2 className="text-xl font-semibold mb-2">Add New Team</h2>
-                    <div className="flex">
-                        <input
-                            type="text"
-                            value={newTeam.Name}
-                            onChange={(e) => setNewTeam({ ...newTeam, Name: e.target.value })}
-                            placeholder="Team Name"
-                            className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-                        />
-                        <input
-                            type="text"
-                            value={newTeam.CoachID}
-                            onChange={(e) => setNewTeam({ ...newTeam, CoachID: e.target.value })}
-                            placeholder="Coach ID"
-                            className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-                        />
+                    {!isAdding && (
                         <button
-                            onClick={handleAddTeam}
+                            onClick={() => setIsAdding(true)}
                             className="bg-blue-500 text-white px-4 py-2 rounded-md"
                         >
-                            Add
+                            Add New Team
                         </button>
-                    </div>
+                    )}
                 </div>
 
                 {/* Teams Table */}
@@ -117,17 +98,94 @@ export default function Team() {
                             </tr>
                         </thead>
                         <tbody>
-                            {teams.map(team => (
-                                <tr key={team.TeamID}>
-                                    <td className="border border-gray-300 px-4 py-2">{team.Name}</td>
-                                    <td className="border border-gray-300 px-4 py-2">{team.CoachID}</td>
+                            {isAdding && (
+                                <tr>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        <input
+                                            type="text"
+                                            value={newTeam.Name}
+                                            onChange={(e) => setNewTeam({ ...newTeam, Name: e.target.value })}
+                                            placeholder="Team Name"
+                                            className="border border-gray-300 rounded-md px-3 py-1"
+                                        />
+                                    </td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        <input
+                                            type="text"
+                                            value={newTeam.CoachID}
+                                            onChange={(e) => setNewTeam({ ...newTeam, CoachID: e.target.value })}
+                                            placeholder="Coach ID"
+                                            className="border border-gray-300 rounded-md px-3 py-1"
+                                        />
+                                    </td>
                                     <td className="border border-gray-300 px-4 py-2">
                                         <button
-                                            onClick={() => handleEditTeam(team)}
-                                            className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                                            onClick={handleAddTeam}
+                                            className="bg-blue-500 text-white px-4 py-2 rounded-md"
                                         >
-                                            Edit
+                                            Save
                                         </button>
+                                        <button
+                                            onClick={() => setIsAdding(false)}
+                                            className="bg-gray-500 text-white px-4 py-2 rounded-md ml-2"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </td>
+                                </tr>
+                            )}
+                            {teams.map((team) => (
+                                <tr key={team.TeamID}>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        {editingTeam === team ? (
+                                            <input
+                                                type="text"
+                                                value={editingTeam.Name}
+                                                onChange={(e) =>
+                                                    setEditingTeam({
+                                                        ...editingTeam,
+                                                        Name: e.target.value
+                                                    })
+                                                }
+                                                className="border border-gray-300 rounded-md px-3 py-1"
+                                            />
+                                        ) : (
+                                            team.Name
+                                        )}
+                                    </td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        {editingTeam === team ? (
+                                            <input
+                                                type="text"
+                                                value={editingTeam.CoachID}
+                                                onChange={(e) =>
+                                                    setEditingTeam({
+                                                        ...editingTeam,
+                                                        CoachID: e.target.value
+                                                    })
+                                                }
+                                                className="border border-gray-300 rounded-md px-3 py-1"
+                                            />
+                                        ) : (
+                                            team.CoachID
+                                        )}
+                                    </td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        {editingTeam === team ? (
+                                            <button
+                                                onClick={handleSaveEdit}
+                                                className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                                            >
+                                                Save
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleEdit(team)}
+                                                className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                                            >
+                                                Edit
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => handleDeleteTeam(team.TeamID)}
                                             className="bg-red-500 text-white py-1 px-3 rounded"
@@ -140,40 +198,11 @@ export default function Team() {
                         </tbody>
                     </table>
                 </div>
-
-                {/* Edit Team Form */}
-                {editedTeam.TeamID !== "" && (
-                    <div className="my-4">
-                        <h2 className="text-xl font-semibold mb-2">Edit Team</h2>
-                        <div className="flex">
-                            <input
-                                type="text"
-                                value={editedTeam.Name}
-                                onChange={(e) => setEditedTeam({ ...editedTeam, Name: e.target.value })}
-                                placeholder="Team Name"
-                                className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-                            />
-                            <input
-                                type="text"
-                                value={editedTeam.CoachID}
-                                onChange={(e) => setEditedTeam({ ...editedTeam, CoachID: e.target.value })}
-                                placeholder="Coach ID"
-                                className="border border-gray-300 rounded-md px-3 py-1 mr-2"
-                            />
-                            <button
-                                onClick={handleSubmitEdit}
-                                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </div>
-                )}
-
             </div>
 
-            <div><Player /></div>
-
+            <div>
+                <Player />
+            </div>
         </div>
     );
 }

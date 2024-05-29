@@ -70,12 +70,19 @@ const DoctorViewResponses = () => {
                                     {responses.map((response, index) => (
                                         <div key={index} className="mb-4 p-4 border border-gray-300 rounded">
                                             <h3 className="text-lg font-semibold mb-2">Response {index + 1}</h3>
-                                            {Object.keys(response).map((questionId, qIndex) => (
-                                                <div key={qIndex} className="mb-2">
-                                                    <p className="font-medium">{response[questionId].text}</p>
-                                                    <p>{response[questionId].value}</p>
-                                                </div>
-                                            ))}
+                                            <p className="font-medium">Player Name: {response.playerName}</p>
+                                            {Object.keys(response).map((questionKey, qIndex) => {
+                                                // Skip playerName key
+                                                if (questionKey !== 'playerName') {
+                                                    return (
+                                                        <div key={qIndex} className="mb-2">
+                                                            <p className="font-medium">{response[questionKey].text}</p>
+                                                            <p>{response[questionKey].value}</p>
+                                                        </div>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
                                             <button
                                                 onClick={() => handleDeleteResponse(response.ResponseID)}
                                                 className="bg-red-500 text-white px-4 py-2 mt-2"

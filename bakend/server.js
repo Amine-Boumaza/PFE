@@ -679,50 +679,83 @@ app.put('/management/players/:id', (req, res) => {
 
 
 
-
-app.post('/management/doctor', (req, res) => {
-  const { formName, formData } = req.body;
-
-  console.log('Received form data:', { formName, formData }); // Log data received from the frontend
-
-  const TenantID = 1; // Assuming TenantID is fixed or comes from somewhere else
-
-  const insertFormQuery = `
-      INSERT INTO FormData (TenantID, FormName, FormData)
-      VALUES (?, ?, ?)
-  `;
-  const values = [TenantID, formName, JSON.stringify(formData)]; // Stringify formData before insertion
-
-  db.query(insertFormQuery, values, (err, result) => {
-    if (err) {
-      console.error('Error creating form:', err);
-      res.status(500).json({ message: 'Error creating form' });
-    } else {
-      console.log('Form data stored successfully:', { formName, formData }); // Log data stored in the database
-      res.status(200).json({ message: 'Form created successfully' });
-    }
-  });
-});
-
-
-
-// Endpoint to fetch available forms
+// Endpoint to fetch available forms along with their questions
 app.get('/forms', async (req, res) => {
   try {
-    // Query to fetch available forms from the database
-    const query = 'SELECT DISTINCT FormName FROM FormData';
+    // Query to fetch available forms along with their questions from the database
+    const query = `
+      SELECT FormName, FormData
+      FROM FormData
+      WHERE TenantID = 1 /* Assuming TenantID is fixed or comes from somewhere else */
+    `;
     db.query(query, (err, result) => {
       if (err) {
         console.error('Error fetching forms:', err);
         res.status(500).json({ error: 'Error fetching forms' });
       } else {
-        const forms = result.map(row => ({ formName: row.FormName }));
+        const forms = result.map(row => {
+          const { FormName, FormData } = row;
+          return {
+            formName: FormName,
+            formData: JSON.parse(FormData) // Parse the JSON data to extract questions
+          };
+        });
         res.status(200).json({ forms });
       }
     });
   } catch (error) {
     console.error('Error fetching forms:', error);
     res.status(500).json({ error: 'Error fetching forms' });
+  }
+});
+
+// Endpoint to delete a form
+app.delete('/forms/:formName', async (req, res) => {
+  const formName = req.params.formName;
+  try {
+    // Query to delete the form by its name
+    const query = `
+      DELETE FROM FormData
+      WHERE FormName = ? AND TenantID = 1 /* Assuming TenantID is fixed or comes from somewhere else */
+    `;
+    db.query(query, [formName], (err, result) => {
+      if (err) {
+        console.error('Error deleting form:', err);
+        res.status(500).json({ error: 'Error deleting form' });
+      } else {
+        console.log('Form deleted successfully:', formName);
+        res.status(200).json({ message: 'Form deleted successfully' });
+      }
+    });
+  } catch (error) {
+    console.error('Error deleting form:', error);
+    res.status(500).json({ error: 'Error deleting form' });
+  }
+});
+
+// Endpoint to edit a form
+app.put('/forms/:formName', async (req, res) => {
+  const formName = req.params.formName;
+  const newFormData = req.body.formData;
+  try {
+    // Query to update the form data
+    const query = `
+      UPDATE FormData
+      SET FormData = ?
+      WHERE FormName = ? AND TenantID = 1 /* Assuming TenantID is fixed or comes from somewhere else */
+    `;
+    db.query(query, [JSON.stringify(newFormData), formName], (err, result) => {
+      if (err) {
+        console.error('Error editing form:', err);
+        res.status(500).json({ error: 'Error editing form' });
+      } else {
+        console.log('Form edited successfully:', formName);
+        res.status(200).json({ message: 'Form edited successfully' });
+      }
+    });
+  } catch (error) {
+    console.error('Error editing form:', error);
+    res.status(500).json({ error: 'Error editing form' });
   }
 });
 
@@ -755,9 +788,12 @@ app.get('/forms/:formName/responses', async (req, res) => {
 });
 
 
-
 app.post('/submit-form', async (req, res) => {
-  const { formName, responses } = req.body;
+  const { formName, playerName, responses } = req.body;
+  console.log('Received Form Name:', formName); // Log received formName
+  console.log('Received Player Name:', playerName); // Log received playerName
+  console.log('Received Responses:', responses); // Log received responses
+
   try {
     // Get the FormID based on the formName
     const formIDQuery = 'SELECT FormID FROM FormData WHERE FormName = ?';
@@ -767,9 +803,14 @@ app.post('/submit-form', async (req, res) => {
         res.status(500).json({ error: 'Error submitting form' });
       } else {
         const formID = result[0].FormID;
-        // Insert form responses into the database
+        // Include player name in the responses data
+        const dataToInsert = {
+          playerName: playerName,
+          ...responses
+        };
+        console.log('Data to be inserted:', dataToInsert); // Log data to be inserted
         const insertQuery = 'INSERT INTO FormResponse (FormID, TenantID, Responses) VALUES (?, ?, ?)';
-        db.query(insertQuery, [formID, 1, JSON.stringify(responses)], (err, result) => {
+        db.query(insertQuery, [formID, 1, JSON.stringify(dataToInsert)], (err, result) => {
           if (err) {
             console.error('Error submitting form:', err);
             res.status(500).json({ error: 'Error submitting form' });
@@ -785,6 +826,10 @@ app.post('/submit-form', async (req, res) => {
     res.status(500).json({ error: 'Error submitting form' });
   }
 });
+
+
+
+
 
 
 app.get('/formresponses/:formName', async (req, res) => {
@@ -803,11 +848,16 @@ app.get('/formresponses/:formName', async (req, res) => {
               res.status(500).json({ error: `Error fetching responses for form ${formName}` });
             } else {
               const parsedResponses = responses.map(response => {
+                const { playerName, ...otherData } = JSON.parse(response.Responses);
                 return {
                   ResponseID: response.ResponseID,
-                  ...JSON.parse(response.Responses)
+                  playerName,
+                  ...otherData
                 };
               });
+
+              console.log('Fetched Responses:', parsedResponses); // Display fetched responses in console
+
               res.status(200).json({ responses: parsedResponses });
             }
           });
@@ -821,6 +871,8 @@ app.get('/formresponses/:formName', async (req, res) => {
     res.status(500).json({ error: `Error fetching form data for form ${formName}` });
   }
 });
+
+
 
 app.delete('/formresponses/:responseId', async (req, res) => {
   const responseId = req.params.responseId;
