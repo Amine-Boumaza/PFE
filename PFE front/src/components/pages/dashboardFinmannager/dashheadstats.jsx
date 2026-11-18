@@ -1,11 +1,18 @@
 // DashboardStats.jsx
+<<<<<<< HEAD
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../../../Context/AuthContext";
+=======
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+>>>>>>> origin/master
 import { GrUserManager } from "react-icons/gr";
 import { GiBabyfootPlayers } from "react-icons/gi";
 import { MdIncompleteCircle } from "react-icons/md";
 export default function DashboardStats() {
+<<<<<<< HEAD
   const { CurrentUser } = useContext(AuthContext);
   const [NOTransactions, setNOTransactions] = useState([]);
   const [ExportsVal, setExportsVal] = useState([]);
@@ -56,31 +63,72 @@ export default function DashboardStats() {
       })
       .catch((error) => {
         console.error("Error fetching GetExportsN:", error);
+=======
+  const [NOTeams, setNOTeams] = useState([]);
+  const [NOPlayers, setNOPlayers] = useState([]);
+  const GetTeams = () => {
+    axios
+      .get("http://localhost:8081/api/management/admin/GetNbTenents")
+      .then((response) => {
+        setNOTeams(response.data);
+        console.log("Fetched session reports:", NOTenants);
+      })
+      .catch((error) => {
+        console.error("Error fetching session reports:", error);
+      });
+  };
+  const GetPlayes = () => {
+    axios
+      .get("http://localhost:8081/api/management/admin/GetNbUsers")
+      .then((response) => {
+        setNOPlayers(response.data);
+        console.log("Fetched session reports:", NOUsers);
+      })
+      .catch((error) => {
+        console.error("Error fetching session reports:", error);
+>>>>>>> origin/master
       });
   };
 
   useEffect(() => {
     // Fetch dashboard statistics from the backend
+<<<<<<< HEAD
     GetNTransactions();
     GetImportsVal();
     GetexportsVal();
+=======
+    GetTeams();
+    GetPlayes();
+>>>>>>> origin/master
   }, []);
 
   return (
     <div className="flex justify-around">
       <BoxWrapper
         label="Number Transactions"
+<<<<<<< HEAD
         value={NOTransactions}
+=======
+        value={NOTeams}
+>>>>>>> origin/master
         icon={<GiBabyfootPlayers className="text-2xl text-white" />}
       />
       <BoxWrapper
         label="Total Amount 'importaions'"
+<<<<<<< HEAD
         value={`${ExportsVal} DZD`}
+=======
+        value={`${NOPlayers} DZD`}
+>>>>>>> origin/master
         icon={<MdIncompleteCircle className="text-2xl text-white" />}
       />
       <BoxWrapper
         label="Total Amount 'exportations'"
+<<<<<<< HEAD
         value={`${ImportsVal} DZD`}
+=======
+        value={`${NOPlayers} DZD`}
+>>>>>>> origin/master
         icon={<MdIncompleteCircle className="text-2xl text-white" />}
       />
     </div>
@@ -94,9 +142,13 @@ function BoxWrapper({ label, value, icon }) {
         <h3 className="text-white text-xl font-bold mb-1">{label}</h3>
         <div className="flex items-center justify-center">
           {icon}
+<<<<<<< HEAD
           <strong className="text-white text-4xl font-bold ml-2">
             {value}
           </strong>
+=======
+          <strong className="text-white text-4xl font-bold ml-2">{value}</strong>
+>>>>>>> origin/master
         </div>
       </div>
     </div>

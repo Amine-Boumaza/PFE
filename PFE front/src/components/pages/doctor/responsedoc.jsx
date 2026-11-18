@@ -57,6 +57,7 @@ const DoctorViewResponses = () => {
     }
   };
 
+<<<<<<< HEAD
   return (
     <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">View Form Responses</h1>
@@ -152,6 +153,56 @@ const DoctorViewResponses = () => {
                       </button>
                     </div>
                   ))}
+=======
+    return (
+        <div className="container mx-auto">
+            <h1 className="text-3xl font-bold mb-4">View Form Responses</h1>
+            {loading ? (
+                <p>Loading forms...</p>
+            ) : (
+                <div>
+                    <select value={selectedForm} onChange={handleFormSelect} className="border border-gray-300 px-2 py-1 mb-4">
+                        <option value="">Select a form...</option>
+                        {forms.map((form, index) => (
+                            <option key={index} value={form.formName}>{form.formName}</option>
+                        ))}
+                    </select>
+                    {selectedForm && (
+                        <div>
+                            <h2 className="text-xl font-bold mb-2">{selectedForm}</h2>
+                            {responses.length > 0 ? (
+                                <div>
+                                    {responses.map((response, index) => (
+                                        <div key={index} className="mb-4 p-4 border border-gray-300 rounded">
+                                            <h3 className="text-lg font-semibold mb-2">Response {index + 1}</h3>
+                                            <p className="font-medium">Player Name: {response.playerName}</p>
+                                            {Object.keys(response).map((questionKey, qIndex) => {
+                                                // Skip playerName key
+                                                if (questionKey !== 'playerName') {
+                                                    return (
+                                                        <div key={qIndex} className="mb-2">
+                                                            <p className="font-medium">{response[questionKey].text}</p>
+                                                            <p>{response[questionKey].value}</p>
+                                                        </div>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                            <button
+                                                onClick={() => handleDeleteResponse(response.ResponseID)}
+                                                className="bg-red-500 text-white px-4 py-2 mt-2"
+                                            >
+                                                Delete Response
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p>No responses found for this form.</p>
+                            )}
+                        </div>
+                    )}
+>>>>>>> origin/master
                 </div>
               ) : (
                 <p className="text-center text-gray-500">No responses found for this form.</p>

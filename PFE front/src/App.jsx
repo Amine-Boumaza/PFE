@@ -12,7 +12,11 @@ import DashboardCoach from "./components/pages/dashboardCoach";
 import DashboardFnMannager from "./components/pages/dashboardFnMannager";
 import DashboardDoctor from "./components/pages/dashboardDoctor";
 import DashboardMannager from "./components/pages/dashboardMannager";
+<<<<<<< HEAD
 import FinancialManagementAdmin from "./components/pages/management codes/financialManagementAdmin";
+=======
+
+>>>>>>> origin/master
 import FinancialManagement from "./components/pages/management codes/financialManagement";
 import Activity from "./components/pages/management codes/activity";
 import Sessions from "./components/pages/management codes/sessions";
@@ -256,6 +260,7 @@ function App() {
                     </ProtectedRoutes>
                   }
                 />
+<<<<<<< HEAD
                 <Route
                   path="doctorForm"
                   element={
@@ -264,6 +269,8 @@ function App() {
                     </ProtectedRoutes>
                   }
                 />
+=======
+>>>>>>> origin/master
               </Route>
             </Routes>
           </Router>
@@ -282,6 +289,7 @@ function App() {
                   </ProtectedRoutes>
                 }
               >
+<<<<<<< HEAD
                 <Route
                   index
                   element={
@@ -290,6 +298,9 @@ function App() {
                     </ProtectedRoutes>
                   }
                 />
+=======
+
+>>>>>>> origin/master
                 <Route
                   path="activity"
                   element={
@@ -300,23 +311,48 @@ function App() {
                 />
 
                 <Route
+<<<<<<< HEAD
                   path="sessions"
                   element={
                     <ProtectedRoutes>
                       <SessionCoach />
+=======
+                  index
+                  element={
+                    <ProtectedRoutes>
+                      <DashboardCoach />
+>>>>>>> origin/master
                     </ProtectedRoutes>
                   }
                 />
                 <Route
+<<<<<<< HEAD
                   path="team"
                   element={
                     <ProtectedRoutes>
                       <TeamCoach />
+=======
+                  path="sessions"
+                  element={
+                    <ProtectedRoutes>
+                      <Sessions />
+>>>>>>> origin/master
                     </ProtectedRoutes>
                   }
                 />
 
+<<<<<<< HEAD
                 {/* Coach Sessions  */}
+=======
+                <Route
+                  path="team"
+                  element={
+                    <ProtectedRoutes>
+                      <Team />
+                    </ProtectedRoutes>
+                  }
+                />
+>>>>>>> origin/master
               </Route>
             </Routes>
           </Router>
@@ -363,7 +399,11 @@ function App() {
                   path="sessions"
                   element={
                     <ProtectedRoutes>
+<<<<<<< HEAD
                       <SessionsMannager />
+=======
+                      <Sessions />
+>>>>>>> origin/master
                     </ProtectedRoutes>
                   }
                 />
@@ -372,7 +412,11 @@ function App() {
                   path="team"
                   element={
                     <ProtectedRoutes>
+<<<<<<< HEAD
                       <TeamMannager />
+=======
+                      <Team />
+>>>>>>> origin/master
                     </ProtectedRoutes>
                   }
                 />
@@ -381,6 +425,7 @@ function App() {
                   path="doctorForm"
                   element={
                     <ProtectedRoutes>
+<<<<<<< HEAD
                       <DoctorManager />
                     </ProtectedRoutes>
                   }
@@ -391,6 +436,9 @@ function App() {
                   element={
                     <ProtectedRoutes>
                       <EditProfile />
+=======
+                      <Doctor />
+>>>>>>> origin/master
                     </ProtectedRoutes>
                   }
                 />

@@ -1,5 +1,6 @@
 import { db } from "../Connect.js";
 
+<<<<<<< HEAD
 export const GetAttendence = (req, res) => {
   const { SessionID } = req.query;
   console.log("Request received to fetch attendance data");
@@ -27,11 +28,22 @@ export const GetAllTeams = (req, res) => {
     JOIN coach AS C ON T.CoachID = C.CoachID 
     WHERE T.TenantID = ?`;
 
+=======
+export const GetAllTeams = (req, res) => {
+  const { TenantID } = req.query;
+  const q = `
+    SELECT T.Name, C.Name AS CoachName 
+    FROM team AS T 
+    JOIN coach AS C ON T.CoachID = C.CoachID 
+    WHERE T.TenantID = ?`;
+
+>>>>>>> origin/master
   db.query(q, [TenantID], (error, AllUsers) => {
     if (error) return res.status(500).json(error);
     res.json(AllUsers);
   });
 };
+<<<<<<< HEAD
 export const GetRapports = (req, res) => {
   const { SessionID } = req.query;
   console.log(SessionID);
@@ -482,6 +494,8 @@ export const GetTeamsPlayers = (req, res) => {
     res.json(AllUsers);
   });
 };
+=======
+>>>>>>> origin/master
 
 export const GetUsersN = (req, res) => {
   const { TenantID } = req.query;
@@ -521,7 +535,11 @@ export const GetAllRapports = (req, res) => {
   const { TenantID } = req.query;
   console.log(TenantID);
   const q =
+<<<<<<< HEAD
     "SELECT S.ReportID,S.CreatedAt,TR.Date,T.Name ,C.Name AS CoachName, S.ReportText AS Summary FROM `sessionreport` AS S , trainingsession AS TR, team AS T, coach AS C WHERE S.TenantID = ? AND S.SessionID = TR.SessionID AND TR.TeamID = T.TeamID AND C.CoachID = T.CoachID";
+=======
+    "SELECT S.ReportID ,S.CreatedAt,TR.Date,T.Name ,C.Name AS CoachName, S.ReportText AS Summary FROM `sessionreport` AS S , trainingsession AS TR, team AS T, coach AS C WHERE S.TenantID = 1 AND S.SessionID = TR.SessionID AND TR.TeamID = T.TeamID AND C.CoachID = T.CoachID";
+>>>>>>> origin/master
 
   db.query(q, [TenantID], (error, AllRapports) => {
     if (error) return res.status(500).json(error);

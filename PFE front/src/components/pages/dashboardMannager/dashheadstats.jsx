@@ -70,12 +70,20 @@ export default function DashboardStats() {
           <h3 className="text-white text-xl font-bold mb-1">{label}</h3>
           <div className="flex items-center justify-center">
             {icon}
+<<<<<<< HEAD
             <strong className="text-white text-4xl font-bold ml-2">
               {value}
             </strong>
+=======
+            <strong className="text-white text-4xl font-bold ml-2">{value}</strong>
+>>>>>>> origin/master
           </div>
         </div>
       </div>
     );
   }
+<<<<<<< HEAD
 }
+=======
+}  
+>>>>>>> origin/master

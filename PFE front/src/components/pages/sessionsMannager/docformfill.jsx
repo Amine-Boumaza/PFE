@@ -9,6 +9,7 @@ const CoachFillForm = () => {
     const [submittingForm, setSubmittingForm] = useState(false);
     const [yesNoOptions, setYesNoOptions] = useState({}); // State to store selected options for "Yes/No" questions
     const [submittedSuccessfully, setSubmittedSuccessfully] = useState(false);
+    const [playerName, setPlayerName] = useState(''); // State to store the player name
 
     useEffect(() => {
         // Fetch available forms from the backend when the component mounts
@@ -64,9 +65,12 @@ const CoachFillForm = () => {
     const handleSubmitForm = async () => {
         try {
             setSubmittingForm(true);
+            console.log('Player Name:', playerName); // Log playerName
+            console.log('Form Responses:', formResponses); // Log formResponses
             // Submit form responses to the backend
             await axios.post('http://localhost:8081/submit-form', {
                 formName: selectedForm,
+                playerName: playerName,
                 responses: formResponses
             });
             console.log('Form submitted successfully');
@@ -93,6 +97,14 @@ const CoachFillForm = () => {
                     </select>
                     {selectedForm && (
                         <div>
+                            {/* Add input field for player name */}
+                            <input
+                                type="text"
+                                value={playerName}
+                                onChange={(e) => setPlayerName(e.target.value)}
+                                placeholder="Enter player name"
+                                className="border border-gray-300 px-2 py-1 mb-4"
+                            />
                             {formResponses && Object.keys(formResponses).length > 0 && (
                                 <div>
                                     <h2 className="text-xl font-bold mb-2">{selectedForm}</h2>

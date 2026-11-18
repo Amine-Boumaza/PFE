@@ -50,7 +50,11 @@ export default function DashboardStats() {
   }, []);
 
   return (
+<<<<<<< HEAD
     <div className="flex gap-4">
+=======
+    <div className="flex justify-around text-center">
+>>>>>>> origin/master
       <BoxWrapper
         label="Number of Teams"
         value={NOTeams}
@@ -63,6 +67,7 @@ export default function DashboardStats() {
       />
     </div>
   );
+<<<<<<< HEAD
 }
 
 function BoxWrapper({ label, value, icon }) {
@@ -80,3 +85,20 @@ function BoxWrapper({ label, value, icon }) {
     </div>
   );
 }
+=======
+
+  function BoxWrapper({ label, value, icon }) {
+    return (
+      <div className="w-96 bg-blue-500 rounded-lg p-4 flex items-center justify-center flex-col">
+        <div className="flex flex-col justify-center">
+          <h3 className="text-white text-xl font-bold mb-1">{label}</h3>
+          <div className="flex items-center justify-center">
+            {icon}
+            <strong className="text-white text-4xl font-bold ml-2">{value}</strong>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+>>>>>>> origin/master

@@ -36,6 +36,7 @@ export default function UserTable() {
       <div className="container mx-auto px-4 sm:px-8">
         <div className="py-8">
           <div className="flex justify-center">
+<<<<<<< HEAD
             <h2 className="text-3xl font-semibold leading-tight text-center">Teams</h2>
           </div>
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
@@ -47,21 +48,60 @@ export default function UserTable() {
                       <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-white uppercase tracking-wider">Number</th>
                       <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-white uppercase tracking-wider">Name</th>
                       <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-white uppercase tracking-wider">Action</th>
+=======
+            <h2 className="text-3xl font-semibold leading-tight text-center">
+              Teams
+            </h2>
+          </div>
+
+          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
+            <div className="max-h-96 overflow-y-auto">
+              <div className="inline-block min-w-full shadow-lg rounded-lg overflow-hidden">
+                <table className="min-w-full leading-normal rounded-lg overflow-hidden">
+                  <thead>
+                    <tr>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Number
+                      </th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Action
+                      </th>
+>>>>>>> origin/master
                     </tr>
                   </thead>
                   <tbody>
                     {Teams.map((team, index) => (
+<<<<<<< HEAD
                       <tr key={index} className="hover:bg-gray-100">
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                           <p className="text-gray-900 whitespace-no-wrap">{team.Number}</p>
                         </td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                           <p className="text-gray-900 whitespace-no-wrap">{team.Name}</p>
+=======
+                      <tr key={index}>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap">
+                            {team.Number}
+                          </p>
+                        </td>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap">
+                            {team.Name}
+                          </p>
+>>>>>>> origin/master
                         </td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                           <button
                             onClick={() => handleSelectTenants(team.Name)}
+<<<<<<< HEAD
                             className="bg-blue-500 text-white py-1 px-3 rounded mr-2 hover:bg-blue-600"
+=======
+                            className="bg-blue-500 text-white py-1 px-3 rounded"
+>>>>>>> origin/master
                           >
                             Select
                           </button>
@@ -76,6 +116,9 @@ export default function UserTable() {
         </div>
       </div>
     </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
   );
 }

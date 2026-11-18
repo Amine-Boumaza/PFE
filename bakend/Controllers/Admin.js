@@ -36,6 +36,7 @@ export const NmbrUsers = (req, res) => {
     res.json(nbUsers.map((nbUsers) => nbUsers.Usersnb));
   });
 };
+<<<<<<< HEAD
 export const AddPlayers = (req, res) => {
   const { TeamID } = req.query;
   const {} = req.body;
@@ -46,6 +47,8 @@ export const AddPlayers = (req, res) => {
     res.json("secces");
   });
 };
+=======
+>>>>>>> origin/master
 export const GetTenentTeams = (req, res) => {
   const q = "SELECT * FROM `team` WHERE TenantID = ?";
   db.query(q, [req.body.TenantID], (error, TenantTeams) => {

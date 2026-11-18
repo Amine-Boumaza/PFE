@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import CategoryTable from "../category/categoriesTable";
 import axios from "axios";
 import AttendanceList from "../attendance/attancdance.jsx";
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 import ShowAttendanceList from "../attendance/showattendance.jsx";
 
 export default function Activity() {
@@ -37,6 +41,7 @@ export default function Activity() {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
+<<<<<<< HEAD
                   <th className="border border-gray-300 px-4 py-2">
                     Report Text
                   </th>
@@ -54,6 +59,17 @@ export default function Activity() {
                     <td className="border border-gray-300 px-4 py-2">
                       {report.CreatedAt}
                     </td>
+=======
+                  <th className="border border-gray-300 px-4 py-2">Report Text</th>
+                  <th className="border border-gray-300 px-4 py-2">Created At</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sessionReports.map(report => (
+                  <tr key={report.ReportID}>
+                    <td className="border border-gray-300 px-4 py-2">{report.ReportText}</td>
+                    <td className="border border-gray-300 px-4 py-2">{report.CreatedAt}</td>
+>>>>>>> origin/master
                   </tr>
                 ))}
               </tbody>
@@ -62,12 +78,17 @@ export default function Activity() {
         </div>
       </div>
 
+<<<<<<< HEAD
       <div>
         <AttendanceList />
       </div>
       <div>
         <ShowAttendanceList />
       </div>
+=======
+      <div><AttendanceList /></div>
+      <div><ShowAttendanceList /></div>
+>>>>>>> origin/master
       <div></div>
     </div>
   );

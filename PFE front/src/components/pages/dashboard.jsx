@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Dashheadstats from "./dashboard/dashheadstats";
-import UserTable from "./dashboard/usertable";
-import SessionTable from "./dashboard/SessionTable";
+import Dashheadstats from "./dashboardCoach/dashheadstats";
+import UserTable from "./dashboardCoach/usertable";
+import SessionTable from "./dashboardCoach/SessionTable";
 
 export default function Dashboard() {
   return (

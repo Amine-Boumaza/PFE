@@ -4,6 +4,7 @@ import {
   GetAllRapports,
   GetUsersN,
   GetTeamsN,
+<<<<<<< HEAD
   GetTeamsPlayers,
   GetCoaches,
   AddTeam,
@@ -19,6 +20,8 @@ import {
   AddSession,
   GetAttendence,
   DeleteSession,
+=======
+>>>>>>> origin/master
 } from "../Controllers/Mannagment.js";
 import {
   GetCoachData,
@@ -29,10 +32,21 @@ import {
   AddInjuryRapport,
   GetCoachTeamsN,
   PlayersNB,
+<<<<<<< HEAD
   GetCoachSessions,
   GetTeamBySID,
   AddSessionRapport,
 } from "../Controllers/Coach.js";
+=======
+} from "../Controllers/Coach.js";
+import {
+  GetTenents,
+  NmbrAdmins,
+  GetAllUsers,
+  NmbrUsers,
+  NmbrTenants,
+} from "../Controllers/Admin.js";
+>>>>>>> origin/master
 import {
   GetTenents,
   NmbrAdmins,
@@ -69,9 +83,13 @@ router.post("/coach/AddRapport", AddSessionRapport);
 router.post("/coach/InjuryRapport", AddInjuryRapport);
 router.get("/coach/Teams", GetTeams);
 router.get("/coach/TeamsNB", GetCoachTeamsN); // done
+<<<<<<< HEAD
 router.get("/coach/Sessions", GetTrainingSessions);
 router.get("/coach/GetCoachSessions", GetCoachSessions);
 router.get("/coach/GetTeamsBySID", GetTeamBySID); //done
+=======
+router.get("/coach/Sessions", GetTrainingSessions); //done
+>>>>>>> origin/master
 router.get("/coach/SessionsWeak", GetTrainingSessionsWeakly);
 //Admin Links
 router.get("/admin/NbAdmins", NmbrAdmins);
@@ -79,7 +97,10 @@ router.get("/admin/GetTenents", GetTenents);
 router.get("/admin/GetNbTenents", NmbrTenants);
 router.get("/admin/GetNbUsers", NmbrUsers);
 router.get("/admin/GetUsers", GetAllUsers);
+<<<<<<< HEAD
 router.post("/admin/AddPlayer", AddPlayer);
+=======
+>>>>>>> origin/master
 
 //Doctor Links
 router.get("/doctor/data", GetDoctorData); // done
@@ -98,6 +119,7 @@ router.post("/finance/AddTransactions", AddTransactions);
 router.put("/finance/EditTransactions", EditTransactions);
 //mannager Links
 router.get("/mannager/VerifyToken", VerifyToken);
+<<<<<<< HEAD
 router.get("/mannager/GetAllTeams", GetAllTeams);
 router.get("/mannager/GetAllSessions", GetAllSessions); //done used
 router.get("/mannager/GetAllRapports", GetAllRapports); //done used
@@ -118,6 +140,13 @@ router.put("/mannager/EditPlayer", UpdatePlayer);
 router.put("/mannager/EditTeam", EditTeam);
 router.put("/mannager/EditRapport", EditRapport);
 router.put("/mannager/EditSession", EditSession); // a discuter
+=======
+router.get("/mannager/GetAllTeams", GetAllTeams); //done used
+router.get("/mannager/GetAllRapports", GetAllRapports); //done used
+router.get("/mannager/GetUsersNb", GetUsersN);
+router.get("/mannager/GetTeamsNb", GetTeamsN);
+router.post("/mannager/Add"); // a discuter
+>>>>>>> origin/master
 
 //Player Links
 router.get("/player/info", player); // done

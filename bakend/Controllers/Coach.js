@@ -12,6 +12,7 @@ export const PlayersNB = (req, res) => {
     res.json(result[0].PlayersNb); // Directly returning the count
   });
 };
+<<<<<<< HEAD
 export const AddSessionRapport = (req, res) => {
   const { SessionID, TennatID } = req.query;
   const {
@@ -82,6 +83,8 @@ export const AddSessionRapport = (req, res) => {
     }
   );
 };
+=======
+>>>>>>> origin/master
 
 export const GetCoachTeamsN = (req, res) => {
   const { TenantID, UserID } = req.query;
@@ -146,6 +149,7 @@ export const GetTeams = (req, res) => {
     res.json(results);
   });
 };
+<<<<<<< HEAD
 export const GetTeamBySID = (req, res) => {
   const { SessionID } = req.query;
   console.log("SessionID", SessionID);
@@ -174,6 +178,8 @@ export const GetCoachSessions = (req, res) => {
     res.json(AllUsers);
   });
 };
+=======
+>>>>>>> origin/master
 
 export const GetTrainingSessions = (req, res) => {
   const { TenantID, UserID } = req.query;

@@ -540,6 +540,40 @@ app.put("/management/session-reports/:reportId", (req, res) => {
   );
 });
 
+<<<<<<< HEAD
+=======
+app.get('/api/management/manager/GetReportById', (req, res) => {
+  const reportId = req.query.ReportID;
+
+  console.log('Received request for ReportID:', reportId); // Log the received ReportID
+
+  if (!reportId) {
+    console.log('ReportID is required but not provided');
+    return res.status(400).json({ message: 'ReportID is required' });
+  }
+
+  // Query to fetch the report from the database
+  const query = 'SELECT * FROM sessionreport WHERE ReportID = ?';
+  db.query(query, [reportId], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+
+    console.log('Query results:', results); // Log the results
+
+    if (results.length === 0) {
+      console.log('No report found with the given ReportID');
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    console.log('Report found:', results[0]); // Log the found report
+    res.json(results[0]);
+  });
+});
+
+
+>>>>>>> origin/master
 // Get all teams
 app.get("/management/teams", (req, res) => {
   db.query("SELECT * FROM team", (error, results) => {
@@ -656,6 +690,7 @@ app.put("/management/players/:id", (req, res) => {
 app.post("/management/doctor", (req, res) => {
   const { formName, formData, TenantID } = req.body;
 
+<<<<<<< HEAD
   console.log("Received form data:", { formName, formData }); // Log data received from the frontend
 
   const insertFormQuery = `
@@ -701,6 +736,31 @@ app.get("/forms", async (req, res) => {
           };
         });
         console.log('Forms data after parsing:', forms);
+=======
+
+
+// Endpoint to fetch available forms along with their questions
+app.get('/forms', async (req, res) => {
+  try {
+    // Query to fetch available forms along with their questions from the database
+    const query = `
+      SELECT FormName, FormData
+      FROM FormData
+      WHERE TenantID = 1 /* Assuming TenantID is fixed or comes from somewhere else */
+    `;
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error('Error fetching forms:', err);
+        res.status(500).json({ error: 'Error fetching forms' });
+      } else {
+        const forms = result.map(row => {
+          const { FormName, FormData } = row;
+          return {
+            formName: FormName,
+            formData: JSON.parse(FormData) // Parse the JSON data to extract questions
+          };
+        });
+>>>>>>> origin/master
         res.status(200).json({ forms });
       } catch (error) {
         console.error('Error parsing FormData JSON:', error);
@@ -713,6 +773,7 @@ app.get("/forms", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 
 app.delete('/forms', async (req, res) => {
   const { formName, TenantID } = req.body;
@@ -723,6 +784,18 @@ app.delete('/forms', async (req, res) => {
       WHERE FormName = ? AND TenantID = ?
     `;
     db.query(query, [formName, TenantID], (err, result) => {
+=======
+// Endpoint to delete a form
+app.delete('/forms/:formName', async (req, res) => {
+  const formName = req.params.formName;
+  try {
+    // Query to delete the form by its name
+    const query = `
+      DELETE FROM FormData
+      WHERE FormName = ? AND TenantID = 1 /* Assuming TenantID is fixed or comes from somewhere else */
+    `;
+    db.query(query, [formName], (err, result) => {
+>>>>>>> origin/master
       if (err) {
         console.error('Error deleting form:', err);
         res.status(500).json({ error: 'Error deleting form' });
@@ -737,7 +810,35 @@ app.delete('/forms', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 
+=======
+// Endpoint to edit a form
+app.put('/forms/:formName', async (req, res) => {
+  const formName = req.params.formName;
+  const newFormData = req.body.formData;
+  try {
+    // Query to update the form data
+    const query = `
+      UPDATE FormData
+      SET FormData = ?
+      WHERE FormName = ? AND TenantID = 1 /* Assuming TenantID is fixed or comes from somewhere else */
+    `;
+    db.query(query, [JSON.stringify(newFormData), formName], (err, result) => {
+      if (err) {
+        console.error('Error editing form:', err);
+        res.status(500).json({ error: 'Error editing form' });
+      } else {
+        console.log('Form edited successfully:', formName);
+        res.status(200).json({ message: 'Form edited successfully' });
+      }
+    });
+  } catch (error) {
+    console.error('Error editing form:', error);
+    res.status(500).json({ error: 'Error editing form' });
+  }
+});
+>>>>>>> origin/master
 
 // Endpoint to fetch form responses for a specific form
 app.get("/forms/:formName/responses", async (req, res) => {
@@ -778,6 +879,7 @@ app.get("/forms/:formName/responses", async (req, res) => {
 //   console.log('Received Responses:', responses);
 //   console.log('Received Tenant ID:', TenantID); // Log received TenantID
 
+<<<<<<< HEAD
 //   try {
 //     // Get the FormID based on the formName
 //     const formIDQuery = 'SELECT FormID FROM FormData WHERE FormName = ?';
@@ -815,6 +917,14 @@ app.get("/forms/:formName/responses", async (req, res) => {
 app.post("/submit-form", async (req, res) => {
   const { formName, responses, TenantID, playerName } = req.body;
   console.log(playerName);
+=======
+app.post('/submit-form', async (req, res) => {
+  const { formName, playerName, responses } = req.body;
+  console.log('Received Form Name:', formName); // Log received formName
+  console.log('Received Player Name:', playerName); // Log received playerName
+  console.log('Received Responses:', responses); // Log received responses
+
+>>>>>>> origin/master
   try {
     // Get the FormID based on the formName
     const formIDQuery = "SELECT FormID FROM FormData WHERE FormName = ?";
@@ -824,6 +934,7 @@ app.post("/submit-form", async (req, res) => {
         res.status(500).json({ error: "Error submitting form" });
       } else {
         const formID = result[0].FormID;
+<<<<<<< HEAD
         // Insert form responses into the database
         const insertQuery =
           "INSERT INTO FormResponse (FormID, TenantID, Responses, PlayerID) VALUES (?, ?, ?, ?)";
@@ -838,6 +949,22 @@ app.post("/submit-form", async (req, res) => {
               console.log("Form submitted successfully");
               res.status(200).json({ message: "Form submitted successfully" });
             }
+=======
+        // Include player name in the responses data
+        const dataToInsert = {
+          playerName: playerName,
+          ...responses
+        };
+        console.log('Data to be inserted:', dataToInsert); // Log data to be inserted
+        const insertQuery = 'INSERT INTO FormResponse (FormID, TenantID, Responses) VALUES (?, ?, ?)';
+        db.query(insertQuery, [formID, 1, JSON.stringify(dataToInsert)], (err, result) => {
+          if (err) {
+            console.error('Error submitting form:', err);
+            res.status(500).json({ error: 'Error submitting form' });
+          } else {
+            console.log('Form submitted successfully');
+            res.status(200).json({ message: 'Form submitted successfully' });
+>>>>>>> origin/master
           }
         );
       }
@@ -848,6 +975,7 @@ app.post("/submit-form", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 app.get("/formresponses/:formName", async (req, res) => {
   const formName = req.params.formName;
   try {
@@ -858,6 +986,42 @@ app.get("/formresponses/:formName", async (req, res) => {
         if (err) {
           console.error("Error fetching FormID:", err);
           res.status(500).json({ error: "Error fetching FormID" });
+=======
+
+
+
+
+
+app.get('/formresponses/:formName', async (req, res) => {
+  const formName = req.params.formName;
+  try {
+    db.query('SELECT FormID FROM FormData WHERE formName = ?', [formName], (err, results) => {
+      if (err) {
+        console.error('Error fetching FormID:', err);
+        res.status(500).json({ error: 'Error fetching FormID' });
+      } else {
+        if (results.length > 0) {
+          const formID = results[0].FormID;
+          db.query('SELECT ResponseID, Responses FROM formresponse WHERE FormID = ?', [formID], (err, responses) => {
+            if (err) {
+              console.error(`Error fetching responses for form ${formName}:`, err);
+              res.status(500).json({ error: `Error fetching responses for form ${formName}` });
+            } else {
+              const parsedResponses = responses.map(response => {
+                const { playerName, ...otherData } = JSON.parse(response.Responses);
+                return {
+                  ResponseID: response.ResponseID,
+                  playerName,
+                  ...otherData
+                };
+              });
+
+              console.log('Fetched Responses:', parsedResponses); // Display fetched responses in console
+
+              res.status(200).json({ responses: parsedResponses });
+            }
+          });
+>>>>>>> origin/master
         } else {
           if (results.length > 0) {
             const formID = results[0].FormID;
@@ -906,7 +1070,12 @@ app.get("/formresponses/:formName", async (req, res) => {
 });
 
 
+<<<<<<< HEAD
 app.delete("/formresponses/:responseId", async (req, res) => {
+=======
+
+app.delete('/formresponses/:responseId', async (req, res) => {
+>>>>>>> origin/master
   const responseId = req.params.responseId;
   try {
     db.query(
@@ -1263,6 +1432,136 @@ app.delete('/api/delete-sport/:id', (req, res) => {
     res.status(200).json({ message: 'Sport deleted successfully' });
   });
 });
+
+app.get('/api/management/activity', (req, res) => {
+  const teamName = req.query.teamName;
+  const sessionId = req.query.sessionId;
+
+  console.log('Received request with teamName:', teamName, 'and sessionId:', sessionId);
+
+  if (!teamName || !sessionId) {
+    console.log('Missing teamName or sessionId');
+    return res.status(400).json({ message: 'Team name and session ID are required' });
+  }
+
+  // Query to fetch players
+  const playersQuery = `
+    SELECT player.PlayerID, player.Name
+    FROM player
+    WHERE player.TeamID = (
+      SELECT TeamID
+      FROM team
+      WHERE Name = ?
+    ) 
+  `;
+
+  // Query to fetch session date
+  const sessionQuery = `
+    SELECT trainingsession.Date
+    FROM trainingsession
+    WHERE trainingsession.SessionID = ?
+  `;
+
+  console.log('Executing players query:', playersQuery, 'with parameters:', [teamName, sessionId]);
+  console.log('Executing session query:', sessionQuery, 'with parameters:', [sessionId]);
+
+  db.query(playersQuery, [teamName, sessionId], (err, playersResults) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+
+    if (playersResults.length === 0) {
+      console.log('No players found for the given team');
+      return res.status(404).json({ message: 'No players found for the given team' });
+    }
+
+    // Execute the session query after fetching players
+    db.query(sessionQuery, [sessionId], (err, sessionResults) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+
+      if (sessionResults.length === 0) {
+        console.log('No session found for the given session ID');
+        return res.status(404).json({ message: 'No session found for the given session ID' });
+      }
+
+      console.log('Sending players:', playersResults);
+      console.log('Sending session date:', sessionResults[0].Date);
+
+      // Combine the players and session date and send the response
+      const responseData = {
+        players: playersResults,
+        sessionDate: sessionResults[0].Date
+      };
+      res.json(responseData);
+    });
+  });
+});
+
+app.post('/api/attendance', (req, res) => {
+  const { attendance } = req.body;
+
+  // Check if attendance property exists and is an array
+  if (!Array.isArray(attendance)) {
+    console.error('Attendance data is missing or invalid');
+    return res.status(400).send('Attendance data is missing or invalid');
+  }
+
+  // Prepare SQL query
+  const sql = 'INSERT INTO attendance (SessionID, PlayerID, Status) VALUES ?';
+
+  // Extracting attendance data to insert into database
+  const values = attendance.map(entry => [entry.sessionId, entry.playerId, entry.status]);
+
+  console.log('SQL query:', sql);
+  console.log('Values to be inserted:', values);
+
+  // Execute the query
+  db.query(sql, [values], (err, result) => {
+    if (err) {
+      console.error('Error saving attendance:', err);
+      res.status(500).send('Error saving attendance');
+    } else {
+      console.log('Attendance saved successfully');
+      res.status(200).send('Attendance saved successfully');
+    }
+  });
+});
+
+
+app.get('/management/attendance', (req, res) => {
+  console.log('Request received to fetch attendance data');
+
+  const sql = `
+  SELECT a.AttendanceID,
+  s.Date AS SessionDate,
+  p.Name AS PlayerName,
+  a.Status
+FROM attendance a
+INNER JOIN trainingsession s ON a.SessionID = s.SessionID
+INNER JOIN player p ON a.PlayerID = p.PlayerID;
+
+  `;
+
+  console.log('Executing SQL query:', sql);
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error fetching attendance data:', err);
+      res.status(500).send('Error fetching attendance data');
+    } else {
+      console.log('Attendance data retrieved successfully:', results);
+      res.json(results);
+    }
+  });
+});
+
+
+
+
 
 
 app.listen(8081, () => {
