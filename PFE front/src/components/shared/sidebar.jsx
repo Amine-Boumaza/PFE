@@ -5,20 +5,26 @@ import { Link, useLocation } from "react-router-dom";
 import { FcBullish } from "react-icons/fc";
 import { HiOutlineLogout } from "react-icons/hi";
 import {
-  // COACH_SIDEBAR_LINKS,
-  // MANAGER_SIDEBAR_LINKS,
+  COACH_SIDEBAR_LINKS,
+  MANAGER_SIDEBAR_LINKS,
   ADMIN_SIDEBAR_LINKS,
-  // DOCTOR_SIDEBAR_LINKS,
-  // FINANCE_SIDEBAR_LINKS,
+  DOCTOR_SIDEBAR_LINKS,
+  FINANCE_SIDEBAR_LINKS,
   DASHBOARD_SIDEBAR_BOTTOM_LINKS,
 } from "../../lib/consts/navigation";
+
 
 const linkClass =
   "flex items-center gap-2 font-light px-3 py-2 hover:bg-neutral-700 hover:no-underline active:bg-neutral-600 rounded-sm text-base";
 
 export default function Sidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { CurrentUser } = useContext(AuthContext);
+  const { CurrentUser, logout } = useContext(AuthContext);
+
+  const HandleLogout = () => {
+    logout();
+    return <Navigate to="/" />;
+  };
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -90,17 +96,16 @@ export default function Sidebar() {
         </button>
       </div>
 
-      <div className="flex flex-col gap-0.5">
-        {ADMIN_SIDEBAR_LINKS.map((link) => (
-          <SidebarLink key={link.key} link={link} />
-        ))}
-      </div>
+      {AccessCheck()}
 
       <div className="flex flex-col gap-0.5 mt-auto">
         {DASHBOARD_SIDEBAR_BOTTOM_LINKS.map((link) => (
           <SidebarLink key={link.key} link={link} />
         ))}
-        <div className={classNames(linkClass, "cursor-pointer text-red-500")}>
+        <div
+          className={classNames(linkClass, "cursor-pointer text-red-500")}
+          onClick={HandleLogout}
+        >
           <span className="text-xl">
             <HiOutlineLogout />
           </span>

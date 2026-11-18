@@ -1,70 +1,64 @@
-// DashboardStats.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../../../../Context/AuthContext";
 
-import { GrUserManager } from "react-icons/gr";
 import { GiBabyfootPlayers } from "react-icons/gi";
 import { MdIncompleteCircle } from "react-icons/md";
+
 export default function DashboardStats() {
-  const [adminCount, setAdminCount] = useState([]);
-  const [NOTenants, setNOTenants] = useState([]);
-  const [NOUsers, setNOUsers] = useState([]);
-  const GetAdminCount = () => {
+  const { CurrentUser } = useContext(AuthContext);
+  const [NOTeams, setNOTeams] = useState(0);
+  const [NOPlayers, setNOPlayers] = useState(0);
+
+  const GetTeams = () => {
     axios
-      .get("http://localhost:8081/api/management/admin/NbAdmins")
+      .get(
+        `http://localhost:8081/api/management/coach/TeamsNB?TenantID=${CurrentUser.TenantID}&UserID=${CurrentUser.UserID}`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((response) => {
-        setAdminCount(response.data);
-        console.log("Fetched session reports:", adminCount);
+        setNOTeams(response.data);
+        console.log("GetTeamsNB Fetch:", response.data);
       })
       .catch((error) => {
-        console.error("Error fetching session reports:", error);
+        console.error("Error fetching GetTeamsNB:", error);
       });
   };
-  const GetTenantCount = () => {
+
+  const GetPlayersNB = () => {
     axios
-      .get("http://localhost:8081/api/management/admin/GetNbTenents")
+      .get(
+        `http://localhost:8081/api/management/coach/GetPlayersNB?TenantID=${CurrentUser.TenantID}&UserID=${CurrentUser.UserID}`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((response) => {
-        setNOTenants(response.data);
-        console.log("Fetched session reports:", NOTenants);
+        setNOPlayers(response.data);
+        console.log("PlayersNB Fetch:", response.data);
       })
       .catch((error) => {
-        console.error("Error fetching session reports:", error);
-      });
-  };
-  const GetUsersCount = () => {
-    axios
-      .get("http://localhost:8081/api/management/admin/GetNbUsers")
-      .then((response) => {
-        setNOUsers(response.data);
-        console.log("Fetched session reports:", NOUsers);
-      })
-      .catch((error) => {
-        console.error("Error fetching session reports:", error);
+        console.error("Error fetching PlayersNB:", error);
       });
   };
 
   useEffect(() => {
-    // Fetch dashboard statistics from the backend
-    GetAdminCount();
-    GetTenantCount();
-    GetUsersCount();
+    GetTeams();
+    GetPlayersNB();
   }, []);
 
   return (
     <div className="flex gap-4">
       <BoxWrapper
-        label="Number of Admins"
-        value={adminCount}
-        icon={<GrUserManager className="text-2xl text-white" />}
-      />
-      <BoxWrapper
-        label="Number of Tenants"
-        value={NOTenants}
+        label="Number of Teams"
+        value={NOTeams}
         icon={<GiBabyfootPlayers className="text-2xl text-white" />}
       />
       <BoxWrapper
-        label="Number of Users"
-        value={NOUsers}
+        label="Number of Players"
+        value={NOPlayers}
         icon={<MdIncompleteCircle className="text-2xl text-white" />}
       />
     </div>

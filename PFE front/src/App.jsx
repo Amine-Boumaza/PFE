@@ -8,14 +8,28 @@ import {
 import Login from "./components/pages/login";
 import Layout from "./components/shared/layout";
 import Dashboard from "./components/pages/dashboard";
+import DashboardCoach from "./components/pages/dashboardCoach";
+import DashboardFnMannager from "./components/pages/dashboardFnMannager";
+import DashboardDoctor from "./components/pages/dashboardDoctor";
+import DashboardMannager from "./components/pages/dashboardMannager";
+import FinancialManagementAdmin from "./components/pages/management codes/financialManagementAdmin";
 import FinancialManagement from "./components/pages/management codes/financialManagement";
 import Activity from "./components/pages/management codes/activity";
 import Sessions from "./components/pages/management codes/sessions";
+import SessionCoach from "./components/pages/management codes/sessionsCoach";
+import SessionsMannager from "./components/pages/management codes/sessionsMannager";
 import Register from "./components/pages/register";
 import Team from "./components/pages/teams/team";
+import TeamCoach from "./components/pages/TeamsCoach/team";
+import TeamMannager from "./components/pages/teamsMannager/team";
 import Doctor from "./components/pages/doctor/doctor";
+import DoctorManager from "./components/pages/doctorAdmin/doctor.jsx";
 import axios from "axios";
 import { AuthContext } from "../Context/AuthContext";
+
+import RegisterAcc from "./components/pages/rejisterAcc.jsx";
+
+import EditProfile from "./components/bottom pages/settings.jsx";
 
 function App() {
   const { CurrentUser } = useContext(AuthContext);
@@ -34,6 +48,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
+            <Route path="/register-exist" element={<RegisterAcc />}></Route>
             <Route
               path="/management/"
               element={
@@ -74,7 +89,8 @@ function App() {
                   </ProtectedRoutes>
                 }
               />
-              <Route path="team"
+              <Route
+                path="team"
                 element={
                   <ProtectedRoutes>
                     <Team />
@@ -130,7 +146,7 @@ function App() {
                   path="financialmanagement"
                   element={
                     <ProtectedRoutes>
-                      <FinancialManagement />
+                      <FinancialManagementAdmin />
                     </ProtectedRoutes>
                   }
                 />
@@ -143,7 +159,8 @@ function App() {
                   }
                 />
 
-                <Route path="team"
+                <Route
+                  path="team"
                   element={
                     <ProtectedRoutes>
                       <Team />
@@ -197,6 +214,14 @@ function App() {
                 }
               >
                 <Route
+                  index
+                  element={
+                    <ProtectedRoutes>
+                      <DashboardFnMannager />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
                   path="financialmanagement"
                   element={
                     <ProtectedRoutes>
@@ -223,6 +248,22 @@ function App() {
                 }
               >
                 {/* Doctor Dashboard  */}
+                <Route
+                  index
+                  element={
+                    <ProtectedRoutes>
+                      <DashboardDoctor />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="doctorForm"
+                  element={
+                    <ProtectedRoutes>
+                      <Doctor />
+                    </ProtectedRoutes>
+                  }
+                />
               </Route>
             </Routes>
           </Router>
@@ -241,14 +282,122 @@ function App() {
                   </ProtectedRoutes>
                 }
               >
-                {/* Coach Dashboard  */}
+                <Route
+                  index
+                  element={
+                    <ProtectedRoutes>
+                      <DashboardCoach />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="activity"
+                  element={
+                    <ProtectedRoutes>
+                      <Activity />
+                    </ProtectedRoutes>
+                  }
+                />
+
+                <Route
+                  path="sessions"
+                  element={
+                    <ProtectedRoutes>
+                      <SessionCoach />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="team"
+                  element={
+                    <ProtectedRoutes>
+                      <TeamCoach />
+                    </ProtectedRoutes>
+                  }
+                />
+
                 {/* Coach Sessions  */}
               </Route>
             </Routes>
           </Router>
         );
       case "mannager":
-        return;
+        return (
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />}></Route>
+              <Route path="/register" element={<Register />}></Route>
+              <Route
+                path="/management/"
+                element={
+                  <ProtectedRoutes>
+                    <Layout />
+                  </ProtectedRoutes>
+                }
+              >
+                <Route
+                  index
+                  element={
+                    <ProtectedRoutes>
+                      <DashboardMannager />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="activity"
+                  element={
+                    <ProtectedRoutes>
+                      <Activity />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="financialmanagement"
+                  element={
+                    <ProtectedRoutes>
+                      <FinancialManagement />
+                    </ProtectedRoutes>
+                  }
+                />
+                <Route
+                  path="sessions"
+                  element={
+                    <ProtectedRoutes>
+                      <SessionsMannager />
+                    </ProtectedRoutes>
+                  }
+                />
+
+                <Route
+                  path="team"
+                  element={
+                    <ProtectedRoutes>
+                      <TeamMannager />
+                    </ProtectedRoutes>
+                  }
+                />
+
+                <Route
+                  path="doctorForm"
+                  element={
+                    <ProtectedRoutes>
+                      <DoctorManager />
+                    </ProtectedRoutes>
+                  }
+                />
+
+                <Route
+                  path="settings"
+                  element={
+                    <ProtectedRoutes>
+                      <EditProfile />
+                    </ProtectedRoutes>
+                  }
+                />
+              </Route>
+            </Routes>
+          </Router>
+        );
       default:
         return (
           <Router>

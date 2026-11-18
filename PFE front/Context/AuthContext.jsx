@@ -18,13 +18,18 @@ export const AuthContextProvider = ({ children }) => {
     );
     SetCurrentUser(res.data);
   };
+  const logout = () => {
+    localStorage.removeItem("user");
+    SetCurrentUser(null);
+    window.location.href = "http://127.0.0.1:5500/index.html"; // Redirect to the desired URL
+  };
 
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(CurrentUser));
   }, [CurrentUser]);
 
   return (
-    <AuthContext.Provider value={{ CurrentUser, login }}>
+    <AuthContext.Provider value={{ CurrentUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

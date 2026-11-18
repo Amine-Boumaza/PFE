@@ -36,6 +36,16 @@ export const NmbrUsers = (req, res) => {
     res.json(nbUsers.map((nbUsers) => nbUsers.Usersnb));
   });
 };
+export const AddPlayers = (req, res) => {
+  const { TeamID } = req.query;
+  const {} = req.body;
+  const q = `INSERT INTO player(TenantID, Name, TeamID, Date_of_Birth,Place_of_birth, Blood_type, Height, weight, ph_Number, Parent_Number, Sex) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+
+  db.query(q, [TeamID], (error, AllUsers) => {
+    if (error) return res.status(500).json(error);
+    res.json("secces");
+  });
+};
 export const GetTenentTeams = (req, res) => {
   const q = "SELECT * FROM `team` WHERE TenantID = ?";
   db.query(q, [req.body.TenantID], (error, TenantTeams) => {

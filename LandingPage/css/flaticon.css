@@ -22,20 +22,24 @@
     line-height: 1em
 }
 
-.flaticon-antenna:before {
-    content: "\f100"
+.flaticon-team:before {
+    content: "\f100";
+    /* Icon for Team and Player Management */
 }
 
-.flaticon-battery:before {
-    content: "\f101"
+.flaticon-calendar:before {
+    content: "\f101";
+    /* Icon for Attendance Tracking */
 }
 
-.flaticon-camera:before {
-    content: "\f102"
+.flaticon-timer:before {
+    content: "\f102";
+    /* Icon for Session Management */
 }
 
-.flaticon-connection:before {
-    content: "\f103"
+.flaticon-medical:before {
+    content: "\f103";
+    /* Icon for Medical follow-up */
 }
 
 .flaticon-control:before {

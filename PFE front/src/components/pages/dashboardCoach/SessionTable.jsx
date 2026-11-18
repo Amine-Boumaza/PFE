@@ -1,67 +1,68 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../../../../Context/AuthContext";
 
 export default function SessionTable() {
+  const { CurrentUser } = useContext(AuthContext);
   const [sessions, setSessions] = useState([]);
 
-  const GetEmployees = (TenantID) => {
-    TenantID = 1;
+  const GetSessions = () => {
     axios
-      .get("http://localhost:8081/api/management/admin/GetUsers", TenantID, {
-        withCredentials: true,
-      })
+      .get(
+        `http://localhost:8081/api/management/coach/Sessions?TenantID=${CurrentUser.TenantID}&UserID=${CurrentUser.UserID}`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((response) => {
         setSessions(response.data);
-        console.log("Employee Fetch:", sessions);
+        console.log("GetSessions Fetch:", response.data);
       })
       .catch((error) => {
-        console.error("Error fetching Employees:", error);
+        console.error("Error fetching GetSessions:", error);
       });
   };
 
-  useEffect(() => {
-    // Fetch session data from the backend
-    GetEmployees();
-  }, []);
+  const handleSelectTenants = (teamName, SessionId) => {
+    window.location.href = `/management/sessions?teamName=${teamName}&sessionId=${SessionId}`;
+  };
 
-  console.log("sessions:", sessions);
+  useEffect(() => {
+    GetSessions();
+  }, []);
 
   return (
     <div className="antialiased font-sans">
       <div className="container mx-auto px-4 sm:px-8">
         <div className="py-8">
-          <div>
-            <h2 className="text-2xl font-semibold leading-tight">Employees</h2>
+          <div className="flex justify-center">
+            <h2 className="text-3xl font-semibold leading-tight text-center">Sessions</h2>
           </div>
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
-            {/* Add max-h-[YOUR_HEIGHT] and overflow-y-auto to make the table scrollable */}
             <div className="max-h-96 overflow-y-auto">
-              <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-                <table className="min-w-full leading-normal">
-                  <thead>
+              <div className="inline-block min-w-full shadow-lg rounded-lg overflow-hidden">
+                <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                  <thead className="bg-gray-700 text-white">
                     <tr>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        User ID
-                      </th>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Role
-                      </th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-white uppercase tracking-wider">Team</th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-white uppercase tracking-wider">Date</th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-white uppercase tracking-wider">Time</th>
+                      <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-white uppercase tracking-wider">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {sessions.map((session, index) => (
-                      <tr key={index}>
+                      <tr key={index} className="hover:bg-gray-100">
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{session.NAME}</td>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{session.Date}</td>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{session.Time}</td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {session.UserID}
-                        </td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {session.Email}
-                        </td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {session.Role}
+                          <button
+                            onClick={() => handleSelectTenants(session.NAME, session.SessionID)}
+                            className="bg-blue-500 text-white py-1 px-3 rounded mr-2 hover:bg-blue-600"
+                          >
+                            Select
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -73,5 +74,6 @@ export default function SessionTable() {
         </div>
       </div>
     </div>
+
   );
 }

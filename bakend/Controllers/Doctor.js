@@ -16,13 +16,21 @@ export const GetDoctorData = (req, res) => {
   });
 };
 
-export const GetInjuryRapports = (req, res) => {
-  const q = "SELECT * FROM `injuryreport` WHERE TenantID = ?";
-  db.query(q, [req.body.TenantID], (error, injuryrapports) => {
+export const FormResponse = (req, res) => {
+  const { TenantID } = req.query;
+  console.log("Tennent ID", TenantID);
+  const q = "SELECT * FROM formresponse WHERE TenantID = ?";
+  db.query(q, [TenantID], (error, injuryrapports) => {
     if (error) return res.status(500).json(error);
     res.json(injuryrapports);
   });
 };
-export const AddMedicalForm = (req, res) => {
-  // a changer
+export const GEtForms = (req, res) => {
+  const { TenantID } = req.query;
+  console.log("Tennent ID", TenantID);
+  const q = "SELECT * FROM `formdata` WHERE TenantID = ?";
+  db.query(q, [TenantID], (error, injuryrapports) => {
+    if (error) return res.status(500).json(error);
+    res.json(injuryrapports);
+  });
 };
