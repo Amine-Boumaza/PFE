@@ -9,7 +9,13 @@ import {
   GetTrainingSessionsWeakly,
   AddInjuryRapport,
 } from "../Controllers/Coach.js";
-import { GetTenents, NmbrAdmins } from "../Controllers/Admin.js";
+import {
+  GetTenents,
+  NmbrAdmins,
+  GetAllUsers,
+  NmbrUsers,
+  NmbrTenants,
+} from "../Controllers/Admin.js";
 import {
   GetInjuryRapports,
   AddMedicalForm,
@@ -32,8 +38,11 @@ router.get("/coach/Teams", GetTeams); // done
 router.get("/coach/Sessions", GetTrainingSessions); //done
 router.get("/coach/SessionsWeak", GetTrainingSessionsWeakly);
 //Admin Links
-router.post("/admin/nbadmins", NmbrAdmins);
-router.post("/admin/gettenents", GetTenents);
+router.get("/admin/NbAdmins", NmbrAdmins);
+router.get("/admin/GetTenents", GetTenents);
+router.get("/admin/GetNbTenents", NmbrTenants);
+router.get("/admin/GetNbUsers", NmbrUsers);
+router.get("/admin/GetUsers", GetAllUsers);
 
 //Doctor Links
 router.get("/doctor/data", GetDoctorData); // done

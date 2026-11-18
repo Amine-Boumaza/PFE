@@ -1,43 +1,47 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function UserTable() {
+export default function UserTable({ onSelectTenant }) {
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    axios.get("http://localhost:8081/management")
-      .then(response => {
-        console.log("Users data received:", response.data.users); // Log the users data received
-        setUsers(response.data.users);
+  const Gettenants = () => {
+    axios
+      .get("http://localhost:8081/api/management/admin/GetTenants")
+      .then((response) => {
+        setUsers(response.data);
       })
-      .catch(error => {
-        console.error("Error fetching users:", error);
+      .catch((error) => {
+        console.error("Error fetching Tenants:", error);
       });
-  }, []);
+  };
 
-  console.log("Users:", users); // Log the users state
+  useEffect(() => {
+    Gettenants();
+  }, []);
 
   return (
     <div className="antialiased font-sans">
       <div className="container mx-auto px-4 sm:px-8">
         <div className="py-8">
           <div>
-            <h2 className="text-2xl font-semibold leading-tight">Users</h2>
+            <h2 className="text-2xl font-semibold leading-tight">Tenants</h2>
           </div>
-
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
             <div className="max-h-96 overflow-y-auto">
               <table className="min-w-full leading-normal">
                 <thead>
                   <tr>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      User
+                      TenantsID
                     </th>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Role
+                      Name
                     </th>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Created at
+                      Contact Info
+                    </th>
+                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Action
                     </th>
                   </tr>
                 </thead>
@@ -46,18 +50,26 @@ export default function UserTable() {
                     <tr key={index}>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
-                          {user.UserID}
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          {user.Role}
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
                           {user.TenantID}
                         </p>
+                      </td>
+                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {user.AssociationName}
+                        </p>
+                      </td>
+                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {user.ContactInfo}
+                        </p>
+                      </td>
+                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                        <button
+                          onClick={() => onSelectTenant(user.TenantID)}
+                          className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                        >
+                          Select
+                        </button>
                       </td>
                     </tr>
                   ))}
